@@ -33,6 +33,17 @@
 
   html { scroll-behavior: smooth; }
 
+  /* ── Reading progress bar ── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: #1a8917;
+    width: 0%;
+    z-index: 999;
+    transition: width 0.1s linear;
+  }
+
   body {
     font-family: var(--serif);
     background: var(--bg);
@@ -707,6 +718,156 @@
     white-space: pre;
   }
 
+  /* ── Topic tags ── */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.75rem 0 0;
+  }
+
+  .tag {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: #f2f2f2;
+    padding: 0.3rem 0.75rem;
+    border-radius: 100px;
+    text-decoration: none;
+  }
+
+  .tag:hover { background: #e8e8e8; color: var(--text); text-decoration: none; }
+
+  /* ── Clap / share row ── */
+  .engage-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  .clap-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--text-secondary);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 0.45rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .clap-btn:hover { border-color: var(--text); color: var(--text); }
+
+  .clap-btn.clapped { border-color: #1a8917; color: #1a8917; }
+
+  .clap-icon { font-size: 1.1rem; }
+
+  .share-links {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .share-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .share-links a:hover { border-color: var(--text); color: var(--text); text-decoration: none; }
+
+  /* ── Originally published ── */
+  .orig-pub {
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .orig-pub a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .orig-pub a:hover { text-decoration: underline; }
+
+  /* ── Author card (bottom) ── */
+  .author-card {
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2.5rem 0;
+    display: flex;
+    gap: 1.1rem;
+    align-items: flex-start;
+  }
+
+  .author-card-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #1d4ed8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .author-card-body { flex: 1; }
+
+  .author-card-name {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .author-card-bio {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 0.6rem;
+  }
+
+  .author-card-link {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .author-card-link:hover { text-decoration: underline; }
+
   /* ── Closing ── */
   .closing-line {
     font-size: 1.05rem;
@@ -743,6 +904,7 @@
 </head>
 <body>
 
+<div id="progress-bar"></div>
 <header class="pub-header">
   <div class="pub-name">H.A.C.K. Loop</div>
   <nav class="pub-nav">
@@ -759,12 +921,12 @@
   <h1>The H.A.C.K. Loop</h1>
   <p class="subtitle">An evidence-first framework for diagnosing application anomalies, issues, and outages — built on Brendan Gregg's <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a> with journey-level Funnel Analysis.</p>
 
-  <div class="author-row">
-    <div class="author-avatar">JS</div>
-    <div class="author-meta">
-      <span class="author-name">Singh Jatinderpal</span>
-      <span class="author-details">10 min read · <a href="https://medium.com/@singhjatinderpal" target="_blank" rel="noopener">Follow on Medium</a></span>
-    </div>
+  <div class="tags">
+    <a class="tag" href="#">Systems Observability</a>
+    <a class="tag" href="#">Incident Response</a>
+    <a class="tag" href="#">Site Reliability</a>
+    <a class="tag" href="#">Engineering</a>
+    <a class="tag" href="#">Debugging</a>
   </div>
 
   <!-- ── Intro ── -->
@@ -1141,15 +1303,64 @@ COMPONENT HEALTH          JOURNEY HEALTH
 
   <p class="closing-line">It is a habit of thought: <strong>measure, investigate, validate, learn. Repeat.</strong></p>
 
+  <!-- ── Engage row ── -->
+  <div class="engage-row">
+    <div class="share-links">
+      <a href="https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64" target="_blank" rel="noopener">Read original ↗</a>
+      <a href="https://twitter.com/intent/tweet?url=https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64&text=The+H.A.C.K.+Loop+—+Evidence-First+Incident+Diagnosis" target="_blank" rel="noopener">Share</a>
+    </div>
+  </div>
+
+  <!-- ── Author card ── -->
+  <div class="author-card">
+    <div class="author-card-avatar">JS</div>
+    <div class="author-card-body">
+      <div class="author-card-name">Singh Jatinderpal</div>
+      <div class="author-card-bio">Engineering lead and systems thinker. Applying evidence-first observability discipline to the application layer.</div>
+      <a class="author-card-link" href="https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64" target="_blank" rel="noopener">More articles ↗</a>
+    </div>
+  </div>
+
+  <!-- ── Originally published ── -->
+  <div class="orig-pub">
+    <span>This is a standalone copy of the original post.</span>
+    <a href="https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64" target="_blank" rel="noopener">View original ↗</a>
+  </div>
+
 </article>
 
 <footer>
   Built on <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">Brendan Gregg's USE Method</a> &nbsp;·&nbsp;
-  <a href="https://medium.com/@singhjatinderpal" target="_blank" rel="noopener">Singh Jatinderpal</a>
+  <a href="https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64" target="_blank" rel="noopener">Singh Jatinderpal</a>
 </footer>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() { hljs.highlightAll(); });
+  document.addEventListener('DOMContentLoaded', function() {
+    hljs.highlightAll();
+
+    var bar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', function() {
+      var doc = document.documentElement;
+      var scrolled = doc.scrollTop || document.body.scrollTop;
+      var total = doc.scrollHeight - doc.clientHeight;
+      bar.style.width = (total > 0 ? Math.round((scrolled / total) * 100) : 0) + '%';
+    }, { passive: true });
+  });
+
+  var clapped = false;
+  function handleClap() {
+    var btn = document.getElementById('clapBtn');
+    var count = document.getElementById('clapCount');
+    if (!clapped) {
+      count.textContent = 143;
+      btn.classList.add('clapped');
+      clapped = true;
+    } else {
+      count.textContent = 142;
+      btn.classList.remove('clapped');
+      clapped = false;
+    }
+  }
 </script>
 </body>
 </html>
