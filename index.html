@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The H.A.C.K. Loop — Canonical Reference</title>
-<meta name="description" content="An evidence-first framework for diagnosing application anomalies and silent failures. USE sees the component. Funnel Analysis sees the journey. H.A.C.K. investigates the gap.">
+<meta name="description" content="An evidence-first framework for diagnosing application anomalies and silent failures. USE sees the component. Application Event Accounting sees the journey. H.A.C.K. investigates the gap.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -250,6 +250,56 @@ blockquote {
   border-radius: 0 4px 4px 0;
 }
 
+/* ── Problem hook ── */
+.problem-hook {
+  background: var(--bg-subtle); border: 1px solid var(--border);
+  border-left: 4px solid var(--accent); border-radius: 4px;
+  padding: 1.35rem 1.75rem; margin: 1.75rem 0;
+  font-family: var(--mono); font-size: 15px; line-height: 2.1;
+  color: var(--accent);
+}
+.problem-hook .ph-ok   { color: var(--step-h); font-weight: 700; }
+.problem-hook .ph-mid  { color: var(--step-k); font-weight: 700; }
+.problem-hook .ph-miss { color: var(--step-a); font-weight: 700; }
+
+/* ── Layer inequality callout ── */
+.layer-callout {
+  background: var(--bg-subtle); border: 1px solid var(--border);
+  border-radius: 6px; padding: 1.25rem 1.5rem; margin: 2rem 0;
+}
+.layer-callout .lc-heading {
+  font-family: var(--mono); font-size: 0.92rem; font-weight: 700;
+  color: var(--accent); margin-bottom: 0.75rem; letter-spacing: -0.01em;
+}
+.layer-callout p {
+  font-family: var(--sans); font-size: 13.5px; color: var(--text-secondary);
+  line-height: 1.65; margin-bottom: 0.4rem;
+}
+.layer-callout p:last-child { margin-bottom: 0; }
+
+/* ── USE comparison table ── */
+.use-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); margin: 1.5rem 0; font-family: var(--sans); font-size: 13.5px; }
+.use-table th { background: var(--bg-subtle); padding: 0.6rem 1rem; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+.use-table td { padding: 0.85rem 1rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); line-height: 1.55; vertical-align: top; }
+.use-table td:first-child { font-weight: 600; color: var(--accent); width: 26%; }
+.use-table tr:last-child td { border-bottom: none; }
+
+/* ── H.A.C.K. in Practice checklist ── */
+.practice-wrap { border: 1px solid var(--border); border-radius: 6px; margin: 1.5rem 0; overflow: hidden; }
+.practice-group { border-bottom: 1px solid var(--border); padding: 0.9rem 1.25rem; }
+.practice-group:last-child { border-bottom: none; }
+.practice-group-hd { margin-bottom: 0.6rem; }
+.practice-q { font-family: var(--sans); font-size: 13.5px; color: var(--text); line-height: 1.6; padding: 0.2rem 0 0.2rem 1.6rem; position: relative; border-bottom: 1px solid var(--border); }
+.practice-q:last-child { border-bottom: none; padding-bottom: 0; }
+.practice-q::before { content: '☐'; position: absolute; left: 0; color: var(--text-muted); font-size: 13px; }
+.practice-q .eq-tag { font-family: var(--mono); font-size: 10.5px; color: var(--text-muted); background: var(--bg-code); border: 1px solid var(--border); padding: 0.05rem 0.4rem; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
+
+/* ── Case study disclaimer ── */
+.cs-disclaimer {
+  font-family: var(--sans); font-size: 12px; color: var(--text-muted);
+  font-style: italic; margin-bottom: 1.5rem; line-height: 1.6; border-bottom: 1px solid var(--border); padding-bottom: 1rem;
+}
+
 /* ── Metadata ── */
 .spec-meta-end {
   font-family: var(--mono); font-size: 13px;
@@ -310,13 +360,28 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
        HERO
   ══════════════════════════════════════════════ -->
   <h1>The H.A.C.K. Loop</h1>
-  <p class="subtitle">An Evidence-First Framework for Diagnosing Application Anomalies, Issues, and Outages</p>
+  <p class="subtitle">An Evidence-First Investigation Loop for Diagnosing Application Anomalies, Issues, and Outages</p>
 
-  <p class="formula-line">USE + Funnel Analysis + H.A.C.K. — Building on Brendan Gregg's <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a> with journey-level application observability.</p>
+  <p class="formula-line">
+    <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a>
+    &nbsp;·&nbsp;
+    <a href="https://c4model.com/" target="_blank" rel="noopener">C4 Application Funnel</a>
+    &nbsp;·&nbsp;
+    Application Event Accounting
+    &nbsp;—&nbsp; three diagnostic layers. One investigation loop.
+  </p>
 
-  <p>When production breaks, the instinct is to guess, patch, and see if the bleeding stops. The H.A.C.K. Loop builds on Brendan Gregg's evidence-first USE Method, adding Funnel Analysis to expose journey-level failures that infrastructure metrics can miss.</p>
+  <div class="problem-hook">
+    <span class="ph-ok">100</span> ad requests entered the system.<br>
+    &nbsp;<span class="ph-mid">&nbsp;62</span> completed.<br>
+    &nbsp;<span class="ph-miss">&nbsp;38</span> disappeared.
+  </div>
 
-  <p>Here, Funnel Analysis means event-flow accounting across an application journey — not simply product or marketing conversion analysis.</p>
+  <p>No error counter incremented. No alert fired. CPU was idle. Latency was nominal. The infrastructure was fine. The user journey was not.</p>
+
+  <p>This is the gap that conventional infrastructure monitoring cannot see — because infrastructure monitoring measures components, not journeys. Finding it requires a different instrument: one that accounts for what entered a system boundary and what actually came out.</p>
+
+  <p>H.A.C.K. is an evidence-first investigation loop built for exactly this.</p>
 
   <!-- ══════════════════════════════════════════════
        FRAMEWORK
@@ -331,8 +396,8 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
     <div class="hack-cell cell-h">
       <div class="hack-letter">H</div>
       <div class="hack-name">Health</div>
-      <div class="hack-desc">Establish execution-path baselines through Funnel Analysis before changing any code.</div>
-      <span class="hack-deliverable">Funnel Baseline Telemetry</span>
+      <div class="hack-desc">Establish what "healthy" looks like for this path. Baseline the expected event flow before any code changes. Healthy cannot be defined during an outage.</div>
+      <span class="hack-deliverable">Event Accounting Baseline</span>
     </div>
     <div class="hack-cell cell-a">
       <div class="hack-letter">A</div>
@@ -343,7 +408,7 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
     <div class="hack-cell cell-c">
       <div class="hack-letter">C</div>
       <div class="hack-name">Candidate Fix</div>
-      <div class="hack-desc">Deploy the smallest diagnostic-first intervention needed to validate the hypothesis.</div>
+      <div class="hack-desc">Deploy the smallest intervention that <em>validates the hypothesis</em> — not necessarily the production fix. Diagnostic first. The fix follows from evidence, not intuition.</div>
       <span class="hack-deliverable">Diagnostic Trap / Hotfix</span>
     </div>
     <div class="hack-cell cell-k">
@@ -373,11 +438,71 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
 </div>
 
   <!-- ══════════════════════════════════════════════
+       USE METHOD RELATIONSHIP
+  ══════════════════════════════════════════════ -->
+  <h3 id="use-relationship">Relationship to the USE Method</h3>
+
+  <p>USE (Utilization, Saturation, Errors) is a resource-health framework. H.A.C.K. is a journey-health framework. They are complementary, not competing:</p>
+
+  <table class="use-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>USE Method</th>
+        <th>H.A.C.K. + Application Event Accounting</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Layer</td>
+        <td>Infrastructure resources</td>
+        <td>Application journey</td>
+      </tr>
+      <tr>
+        <td>Primary question</td>
+        <td><em>Is this component healthy?</em></td>
+        <td><em>Did this event make it through?</em></td>
+      </tr>
+      <tr>
+        <td>Measures</td>
+        <td>Utilization · Saturation · Errors</td>
+        <td>Inputs · Outputs · ΔBuffer · Sinks · Gap</td>
+      </tr>
+      <tr>
+        <td>Blind spot</td>
+        <td>Silent application-layer hangs</td>
+        <td>Resource saturation and component error rates</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>A green USE dashboard is necessary, not sufficient. When infrastructure is healthy and events are still disappearing, Application Event Accounting is the next diagnostic instrument.</p>
+
+  <!-- ══════════════════════════════════════════════
        APPLICATION EVENT ACCOUNTING
   ══════════════════════════════════════════════ -->
   <h2 id="core-idea">Application Event Accounting</h2>
 
   <p>At any defined application boundary — an SDK call, an authentication flow, an ad request — every operation that enters should eventually exit through one of three paths: a successful completion, an explicit failure or terminal state, or a bounded in-flight operation awaiting resolution.</p>
+
+<div class="ascii-diagram">              INPUTS
+                 │
+    ┌────────────┼────────────────┐
+    ▼            ▼                ▼
+ <span class="highlight">SUCCESS</span>     <span class="highlight">EXPLICIT FAILURE</span>      <span class="highlight">BUFFER</span>
+ (Outputs)   (Sinks: errors,       (Bounded
+              timeouts, cancels)    in-flight)
+    └────────────┴────────────────┘
+                 │
+          Any remainder?
+                 │
+                 ▼
+          <span class="highlight">UNACCOUNTED</span>
+       (no terminal state:
+        <span class="muted">silent hangs, drops</span>)
+                 │
+                 ▼
+           INVESTIGATE</div>
 
   <div class="equation-box">
     <div class="eq-render">
@@ -399,6 +524,89 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
 
   <p>A conventional failure takes a path. A <code>catch</code> block fires. A timeout resolves. An error counter increments. But an operation that never settles bypasses every one of those mechanisms — it neither succeeds nor fails. Infrastructure can remain completely idle and error-free while thousands of user operations are silently stuck. The system looks healthy because the component <em>is</em> healthy. The journey is not.</p>
 
+  <div class="layer-callout">
+    <div class="lc-heading">Infrastructure Health &nbsp;≠&nbsp; Application Health &nbsp;≠&nbsp; User Journey Health</div>
+    <p>Each layer can independently disagree. A component can be fully operational while the journey through it is failing. An aggregated metric can hide a cohort-specific collapse. An error counter can stay flat while events simply disappear.</p>
+    <p>Application Event Accounting measures the layer that infrastructure monitoring doesn't reach.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       HEALTH FUNNEL CREATION
+  ══════════════════════════════════════════════ -->
+  <h2 id="architecture">Health Funnel Creation</h2>
+
+  <p>A health funnel cannot be measured during an outage — it must be built before one. The Health Funnel is a composite of three diagnostic layers applied at every architectural boundary: the <a href="https://c4model.com/" target="_blank" rel="noopener">C4 Model</a> identifies <em>where</em> the boundaries are, the <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a> answers whether each boundary is resource-healthy, and Application Event Accounting answers whether events are flowing through it correctly.</p>
+
+  <div class="key-insight">
+    At every event flow boundary —<br>
+    USE: <em>Is this boundary resource-healthy?</em><br>
+    Event Accounting: <em>Are events flowing through it correctly?</em>
+  </div>
+
+<div class="ascii-diagram">                    <span class="highlight">THE HEALTH FUNNEL</span>
+
+  ┌──────────────────────────────────────────────────────────┐
+  │  <span class="highlight">1 — CONTEXT</span>                                             │
+  │  USE:    Utilization · Saturation · Errors               │
+  │  Events: external entry → success | fail | unaccounted   │
+  └──────────────────────┬───────────────────────────────────┘
+                         │  event flow
+  ┌──────────────────────▼───────────────────────────────────┐
+  │  <span class="highlight">2 — CONTAINERS</span>                                          │
+  │  USE:    Service utilization · Queue depth · Errors      │
+  │  Events: session_start → auth_ok → ad_req                │
+  └──────────────────────┬───────────────────────────────────┘
+                         │  event flow
+  ┌──────────────────────▼───────────────────────────────────┐
+  │  <span class="highlight">3 — COMPONENTS</span>                                          │
+  │  USE:    Component load · Retry rate · Error rate        │
+  │  Events: AdLoadMgr → SDK Adapter → Retry Handler         │
+  └──────────────────────┬───────────────────────────────────┘
+                         │  event flow
+  ┌──────────────────────▼───────────────────────────────────┐
+  │  <span class="highlight">4 — CODE</span>                                                │
+  │  USE:    Thread util · Pending ops · Exception rate      │
+  │  Events: Promise.race() · timeout · fallback metric      │
+  └──────────────────────┬───────────────────────────────────┘
+                         │
+                  <span class="highlight">UNACCOUNTED GAP</span>
+                         ↓
+                    INVESTIGATE</div>
+
+  <table class="c4-table">
+    <thead>
+      <tr>
+        <th style="width:16%">C4 Level</th>
+        <th style="width:42%">USE at this boundary</th>
+        <th>Application Event Accounting</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1 — Context</td>
+        <td>Throughput rate · Gateway queue depth · Error codes across external API calls</td>
+        <td>Entry / exit accounting for every external boundary: third-party APIs, payment processors, social auth flows, cross-border gateways.</td>
+      </tr>
+      <tr>
+        <td>2 — Containers</td>
+        <td>Service utilization · Inter-service queue depth · Cross-boundary error rates</td>
+        <td>Cross-boundary tracer strings (<code>session_start → auth_ok → ad_req</code>) with latency deltas (ΔT) per hop. Every transition must reach a terminal state.</td>
+      </tr>
+      <tr>
+        <td>3 — Components</td>
+        <td>Component load · Retry rate · Module-level error rate</td>
+        <td>Module-to-module event flow (<code>AdLoadManager → SDK Adapter → Retry Handler</code>). Identifies the exact component where accounting breaks.</td>
+      </tr>
+      <tr>
+        <td>4 — Code</td>
+        <td>Thread / async utilization · Pending-operation depth · Exception rate</td>
+        <td><code>Promise.race()</code> wrappers · explicit timeouts · fallback telemetry · targeted diagnostic hooks at the lowest observable execution point.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>The goal is not to instrument everything. It is to ensure that at every critical boundary, both the resource health (USE) and the event flow (Application Event Accounting) are observable before an incident makes them urgent.</p>
+
   <!-- ══════════════════════════════════════════════
        CASE STUDY
   ══════════════════════════════════════════════ -->
@@ -410,9 +618,11 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
     <div class="cs-header">INC-2026-AD-REQ-DOWN &nbsp;·&nbsp; P0 Revenue Critical &nbsp;·&nbsp; iOS Ad Funnel Collapse</div>
     <div class="cs-body">
 
-      <h3>The Symptom</h3>
+      <p class="cs-disclaimer">This is a reconstructed investigation. Technical details reflect the investigation's structure and findings. Incident identifiers and metrics are representative of the investigation, not publicly verifiable production records.</p>
+
+      <h3>The Signal That Wasn't There</h3>
       <p>Gameplay engagement remained entirely normal. Infrastructure metrics stayed within nominal thresholds. No binary release had gone out. Yet interstitial ad impressions on iOS collapsed.</p>
-      <p>This is a textbook traffic-light failure: everything visible to infrastructure monitoring remained green while an application journey silently failed. Without journey-level instrumentation, there was no starting point for investigation.</p>
+      <p>This is the defining characteristic of a journey-level failure: all component-level signals remain green while an application path silently stops working. Without journey-level instrumentation, there is no starting point — only symptoms and guesses.</p>
 
       <hr class="cs-divider">
 
@@ -453,8 +663,8 @@ HAVING net_hanging_promises > 0;</code></pre>
       <hr class="cs-divider">
 
       <div class="cs-step cs-step-c">C — Candidate Fix</div>
-      <p>Isolation pointed to a third-party social SDK failing to settle promises under specific iOS runtime conditions. Standard <code>catch</code> blocks never fired — the operations simply hung indefinitely.</p>
-      <p>A 20-second <code>Promise.race()</code> cutoff was injected at the interop boundary to test the hypothesis. The intent was diagnostic: if operations were truly hanging, the timeout would convert invisible hangs into explicit, observable rejections.</p>
+      <p>Cohort isolation narrowed the anomaly to iOS, specific ad unit types, and a specific version range of a third-party social SDK. This produced a testable hypothesis: <strong>the SDK was failing to settle promises under certain iOS runtime conditions, with no callback firing on either the success or failure path</strong> — bypassing every standard error-handling mechanism.</p>
+      <p>A 20-second <code>Promise.race()</code> cutoff was injected at the interop boundary to validate that hypothesis. The intent was diagnostic: if operations were truly hanging indefinitely, the timeout would convert invisible hangs into explicit, observable rejections.</p>
 
       <div class="cs-chain">silent hang  →  bounded timeout  →  explicit failure  →  observable telemetry</div>
 
@@ -484,34 +694,83 @@ HAVING net_hanging_promises > 0;</code></pre>
   ══════════════════════════════════════════════ -->
   <h2 id="antipatterns">Operational Anti-Patterns</h2>
 
-  <p>Incident anti-patterns share a common root cause: action is taken before the failure domain is established. Time pressure, incomplete tooling, and organizational dynamics all push teams toward intervention before evidence. H.A.C.K. makes these patterns explicit so they can be recognized — and interrupted.</p>
+  <p>Incident anti-patterns share a common root: action is taken before the failure domain is established. Time pressure, incomplete tooling, and organizational dynamics all push teams toward intervention before evidence. H.A.C.K. makes these patterns explicit so they can be recognized — and interrupted.</p>
 
   <div class="ap-card">
-    <div class="ap-title">1. Streetlight Anti-Pattern</div>
-    <div class="ap-quote">"Searching where existing dashboards already look, rather than where the dark path lives."</div>
-    <div class="ap-box ap-why"><strong>Why it happens:</strong> Under pressure, engineers default to familiar tools. When time is short and stakes are high, the instinct is to search where answers have been found before — not where the evidence says the problem may actually be.</div>
-    <div class="ap-box ap-how"><strong>H.A.C.K. fix:</strong> Start with 5–10 minutes of surface checks. If no clear signal emerges, stop searching where the light already shines. Instrument the dark path instead. Count what entered the boundary versus what resolved, and let the unexplained gap identify where to look next.</div>
-  </div>
-
-  <div class="ap-card">
-    <div class="ap-title">2. Cross-Boundary Deflection Anti-Pattern</div>
-    <div class="ap-quote">"Escalating across platform boundaries based on intuition rather than telemetry."</div>
-    <div class="ap-box ap-why"><strong>Why it happens:</strong> Cross-boundary failures are genuinely harder to prove. Without shared telemetry across both sides, assuming the problem lives somewhere else can feel reasonable. Suspicion is easier to voice than evidence is to gather.</div>
-    <div class="ap-box ap-how"><strong>H.A.C.K. fix:</strong> Isolate the failing journey before escalating. Measure what crossed the boundary, what returned, and what remained unaccounted for. Evidence transforms "your system is broken" into a reproducible, boundary-bounded signal the other side can investigate and action.</div>
-  </div>
-
-  <div class="ap-card">
-    <div class="ap-title">3. Random Change Anti-Pattern</div>
-    <div class="ap-quote">"Tweaking configs or restarting nodes until symptoms clear, without establishing the cause."</div>
-    <div class="ap-box ap-why"><strong>Why it happens:</strong> Correlation feels like causation under incident pressure. When a change coincides with recovery, the brain naturally connects the two. Once the metric turns green, teams are often too relieved to question the explanation.</div>
-    <div class="ap-box ap-how"><strong>H.A.C.K. fix:</strong> Before declaring resolution, establish the mechanism. What changed in the execution path, and why should that change produce this recovery? If the explanation doesn't hold against the evidence, the symptom may be masked rather than resolved.</div>
-  </div>
-
-  <div class="ap-card">
-    <div class="ap-title">4. Traffic-Light Anti-Pattern</div>
+    <div class="ap-title">1. Traffic-Light Anti-Pattern</div>
     <div class="ap-quote">"Assuming the application is healthy because all infrastructure indicators report green."</div>
-    <div class="ap-box ap-why"><strong>Why it happens:</strong> Dashboards are optimized around signals we already know how to measure. Green infrastructure metrics create a false sense of completeness when the user journey itself isn't being measured.</div>
-    <div class="ap-box ap-how"><strong>H.A.C.K. fix:</strong> Treat infrastructure health as necessary, not sufficient. Pair component-level health with journey-level event accounting. If infrastructure is green but conversion is falling, follow the event path rather than the dashboard color.</div>
+    <div class="ap-box ap-why"><strong>Why it fails:</strong> Dashboards are optimized around signals already known to be measurable. Green infrastructure metrics create a false sense of completeness when the user journey itself isn't being measured — and a metric cannot signal what it isn't observing.</div>
+    <div class="ap-box ap-how"><strong>H.A.C.K. alternative:</strong> Treat infrastructure health as necessary, not sufficient. Pair component-level health with Application Event Accounting. If infrastructure is green but events are not resolving, follow the event path, not the dashboard color.</div>
+  </div>
+
+  <div class="ap-card">
+    <div class="ap-title">2. Streetlight Anti-Pattern</div>
+    <div class="ap-quote">"Searching where existing dashboards already look, rather than where the failure actually lives."</div>
+    <div class="ap-box ap-why"><strong>Why it fails:</strong> Under pressure, engineers default to familiar tools. When time is short and stakes are high, the instinct is to search where answers have been found before — regardless of whether the evidence points there.</div>
+    <div class="ap-box ap-how"><strong>H.A.C.K. alternative:</strong> Start with 5–10 minutes of surface checks. If no clear signal emerges, stop searching where the light already shines. Instrument the dark path instead. Count what entered the boundary versus what resolved, and let the accounting gap identify where to look next.</div>
+  </div>
+
+  <div class="ap-card">
+    <div class="ap-title">3. Cross-Boundary Deflection Anti-Pattern</div>
+    <div class="ap-quote">"Escalating across platform boundaries based on intuition rather than telemetry."</div>
+    <div class="ap-box ap-why"><strong>Why it fails:</strong> Cross-boundary failures are genuinely harder to prove. Without shared telemetry across both sides, assuming the problem lives elsewhere can feel reasonable — suspicion is easier to voice than evidence is to gather.</div>
+    <div class="ap-box ap-how"><strong>H.A.C.K. alternative:</strong> Isolate the failing journey before escalating. Measure what crossed the boundary, what returned, and what remained unaccounted for. Evidence transforms "your system is broken" into a reproducible, boundary-bounded signal the other side can investigate and action.</div>
+  </div>
+
+  <div class="ap-card">
+    <div class="ap-title">4. Random Change Anti-Pattern</div>
+    <div class="ap-quote">"Tweaking configs or restarting nodes until symptoms clear, without establishing the cause."</div>
+    <div class="ap-box ap-why"><strong>Why it fails:</strong> Under incident pressure, correlation feels like causation. When a change coincides with recovery, the brain naturally connects the two. Once the metric turns green, teams are often too relieved to question the explanation — and the failure class goes uncaptured.</div>
+    <div class="ap-box ap-how"><strong>H.A.C.K. alternative:</strong> Before declaring resolution, establish the mechanism. What changed in the execution path, and why should that change produce this recovery? If the explanation doesn't hold against the evidence, the symptom may be masked rather than resolved.</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       H.A.C.K. IN PRACTICE
+  ══════════════════════════════════════════════ -->
+  <h2 id="practice">H.A.C.K. in Practice</h2>
+
+  <p>A senior engineer approaching an anomaly should be able to answer these questions from available telemetry. If the telemetry doesn't support the answers, the instrumentation gap is the first problem to solve — not the application code.</p>
+
+  <div class="practice-wrap">
+
+    <!-- H: Health -->
+    <div class="practice-group">
+      <div class="practice-group-hd"><span class="cs-step cs-step-h">H — Health</span></div>
+      <div class="practice-q">What is the expected event flow for this path?</div>
+    </div>
+
+    <!-- Event Accounting -->
+    <div class="practice-group" style="background: var(--bg-subtle);">
+      <div class="practice-group-hd">
+        <span style="font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);">Event Accounting &nbsp;—&nbsp; Inputs = Outputs + ΔBuffer + Sinks</span>
+      </div>
+      <div class="practice-q">What entered the boundary? <span class="eq-tag">Inputs</span></div>
+      <div class="practice-q">What resolved successfully? <span class="eq-tag">Outputs</span></div>
+      <div class="practice-q">What reached an explicit terminal failure state? <span class="eq-tag">Sinks</span></div>
+      <div class="practice-q">What is bounded in-flight? <span class="eq-tag">ΔBuffer</span></div>
+      <div class="practice-q">What was intentionally discarded?</div>
+      <div class="practice-q">What remains unexplained?</div>
+    </div>
+
+    <!-- A: Anomaly -->
+    <div class="practice-group">
+      <div class="practice-group-hd"><span class="cs-step cs-step-a">A — Anomaly</span></div>
+      <div class="practice-q">Where does the journey diverge from baseline?</div>
+      <div class="practice-q">What hypothesis explains the accounting gap?</div>
+    </div>
+
+    <!-- C: Candidate Fix -->
+    <div class="practice-group">
+      <div class="practice-group-hd"><span class="cs-step cs-step-c">C — Candidate Fix</span></div>
+      <div class="practice-q">What is the smallest intervention that validates it?</div>
+    </div>
+
+    <!-- K: Knowledge -->
+    <div class="practice-group">
+      <div class="practice-group-hd"><span class="cs-step cs-step-k">K — Knowledge</span></div>
+      <div class="practice-q">What did we learn — confirmed or refuted?</div>
+    </div>
+
   </div>
 
   <!-- ══════════════════════════════════════════════
@@ -519,7 +778,7 @@ HAVING net_hanging_promises > 0;</code></pre>
   ══════════════════════════════════════════════ -->
   <h2 id="three-w">Three Diagnostic Questions</h2>
 
-  <p>At every boundary, Funnel Analysis reduces to the same three questions. If these cannot be answered from available telemetry, the first problem to solve is not the application code — it is the instrumentation gap.</p>
+  <p>At every investigation boundary, Application Event Accounting reduces to three questions. If these cannot be answered from available telemetry, the instrumentation gap is the first problem to solve.</p>
 
   <div class="w-row">
     <div class="w-cell">
@@ -532,51 +791,18 @@ HAVING net_hanging_promises > 0;</code></pre>
     </div>
     <div class="w-cell">
       <div class="w-q">When?</div>
-      <div class="w-desc">When was the funnel last balanced? That timestamp anchors the investigation.</div>
+      <div class="w-desc">When was the accounting last balanced? That timestamp anchors the investigation window.</div>
     </div>
   </div>
 
   <blockquote>Count what entered. Count what exited. Investigate the difference.</blockquote>
 
   <!-- ══════════════════════════════════════════════
-       C4 ARCHITECTURE
-  ══════════════════════════════════════════════ -->
-  <h2 id="architecture">Pre-Incident Architecture Mapping</h2>
-
-  <p>Observability gaps tend to emerge at architectural boundaries — services instrument their internals but leave transitions untracked. Layering Funnel Analysis onto the <a href="https://c4model.com/" target="_blank" rel="noopener">C4 Model</a> provides a structured way to map diagnostic coverage <em>before</em> an outage occurs.</p>
-
-  <table class="c4-table">
-    <thead>
-      <tr><th>C4 Level</th><th>Boundary Focus &amp; Diagnostic Objective</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1 — Context</td>
-        <td>Conversion and failure drop-offs across external boundaries: third-party vendor APIs, payment processors, social authentication flows, and cross-border gateways.</td>
-      </tr>
-      <tr>
-        <td>2 — Containers</td>
-        <td>Transitions between runtime environments, microservices, and databases tracked with cross-boundary tracer strings (<code>session_start → auth_ok → ad_req</code>) and latency metrics (ΔT).</td>
-      </tr>
-      <tr>
-        <td>3 — Components</td>
-        <td>Execution flows across application modules (<code>AdLoadManager → SDK Adapter → Retry Handler</code>). Narrows the failure domain to the specific component where event accounting breaks.</td>
-      </tr>
-      <tr>
-        <td>4 — Code</td>
-        <td>Lowest-level async execution points: <code>Promise.race()</code> wrappers, explicit timeouts, fallback metrics, thread dumps, and targeted diagnostic hooks.</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <p>The goal is not to instrument everything. It is to ensure that critical application boundaries are observable before an incident makes them urgent.</p>
-
-  <!-- ══════════════════════════════════════════════
        C.H.A.I.
   ══════════════════════════════════════════════ -->
   <h2 id="chai">C.H.A.I. — AI in the Loop</h2>
 
-  <p>H.A.C.K. is effective without AI. LLMs can, however, accelerate specific points in the loop — not by acting as autonomous investigators, but by processing structured evidence and reducing the time between observation, hypothesis, and intervention.</p>
+  <p>H.A.C.K. does not require AI. The framework is grounded in telemetry, evidence, and explicit reasoning — not probabilistic inference. LLMs can, however, accelerate specific points in the loop by processing structured evidence and reducing the time between observation, hypothesis, and intervention. They act as investigation accelerators, not autonomous investigators.</p>
 
   <div class="chai-grid">
     <div class="chai-card">
@@ -608,6 +834,12 @@ HAVING net_hanging_promises > 0;</code></pre>
   <!-- ══════════════════════════════════════════════
        CLOSING
   ══════════════════════════════════════════════ -->
+  <p>When infrastructure says everything is healthy but users say otherwise, stop looking only at resource health. Account for the application's events. Find what entered, what exited, what remains in flight — and then investigate what cannot yet be explained.</p>
+
+  <p>That unexplained remainder is where the failure lives.</p>
+
+  <p style="font-family: var(--sans); font-size: 1rem; font-weight: 600; color: var(--accent); margin-bottom: 1.5rem;">Health → Anomaly → Candidate Fix → Knowledge.</p>
+
   <div class="closing-quote">
     The code solution is only one part of incident response. The real engineering asset is the knowledge that emerges: what failed, where it failed, how evidence exposed it, why the intervention worked, and how the system can automatically catch or prevent that failure class next time.
   </div>
@@ -619,18 +851,23 @@ HAVING net_hanging_promises > 0;</code></pre>
   ══════════════════════════════════════════════ -->
   <div class="spec-meta-end">
     <div><strong>Author</strong> Jatinderpal Singh</div>
-    <div><strong>Domain</strong> Systems Observability &amp; Incident Response</div>
+    <div><strong>Domain</strong> Application-Health Framework &nbsp;·&nbsp; Business &amp; System Observability</div>
     <div><strong>Status</strong> Published Specification</div>
     <div><strong>Canonical URI</strong> <a href="https://erjsingh2012.github.io/HACK-Loop/">erjsingh2012.github.io/HACK-Loop/</a></div>
     <div><strong>Medium Article</strong> <a href="https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64" target="_blank" rel="noopener">Read the original story ↗</a></div>
     <div><strong>USE Method</strong> <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">brendangregg.com/usemethod.html ↗</a></div>
+    <div><strong>C4 Model</strong> <a href="https://c4model.com/" target="_blank" rel="noopener">c4model.com ↗</a></div>
   </div>
 
 </article>
 
 <footer>
   Maintained by Jatinderpal Singh &nbsp;·&nbsp;
-  Complementing <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">Brendan Gregg's USE Method</a>
+  <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a>
+  &nbsp;·&nbsp;
+  <a href="https://c4model.com/" target="_blank" rel="noopener">C4 Model</a>
+  &nbsp;·&nbsp;
+  Application Event Accounting
 </footer>
 
 <script>
