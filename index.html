@@ -92,6 +92,15 @@ h2 {
 }
 h3 { font-family: var(--sans); font-size: 1.1rem; font-weight: 600; margin: 1.75rem 0 0.5rem; color: var(--accent); }
 
+/* ── Formula line ── */
+.formula-line {
+  font-family: var(--sans); font-size: 1rem; font-weight: 500;
+  color: var(--text-secondary); line-height: 1.55;
+  border-left: 3px solid var(--border);
+  padding-left: 1rem; margin-bottom: 2rem;
+}
+.formula-line a { color: var(--text-secondary); }
+
 /* ── Key insight callout ── */
 .key-insight {
   border-left: 4px solid var(--accent);
@@ -189,15 +198,6 @@ blockquote {
 .c4-table td:first-child { font-weight: 600; color: var(--accent); white-space: nowrap; }
 .c4-table tr:last-child td { border-bottom: none; }
 
-/* ── USE comparison table ── */
-.use-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); margin: 2rem 0; font-family: var(--sans); font-size: 14px; }
-.use-table thead tr { background: var(--accent); }
-.use-table th { color: #fff; padding: 0.75rem 1rem; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-.use-table td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); line-height: 1.5; vertical-align: top; color: var(--text-secondary); }
-.use-table td:first-child { font-weight: 700; color: var(--accent); white-space: nowrap; }
-.use-table tr:last-child td { border-bottom: none; }
-.use-table tr:nth-child(odd) td { background: var(--bg-subtle); }
-
 /* ── Anti-pattern cards ── */
 .ap-card { border: 1px solid var(--border); border-radius: 6px; padding: 1.25rem; margin: 1.5rem 0; background: var(--bg); font-family: var(--sans); }
 .ap-title { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 0.25rem; }
@@ -233,18 +233,6 @@ blockquote {
 }
 .cs-body ul { margin: 0.5rem 0 1rem 1.25rem; line-height: 1.7; }
 .cs-body li { margin-bottom: 0.35rem; }
-
-/* ── When to use ── */
-.when-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0; }
-.when-card { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; font-family: var(--sans); font-size: 13px; }
-.when-card-header { padding: 0.6rem 1rem; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
-.when-use .when-card-header { background: var(--step-h-bg); color: var(--step-h); border-color: #bbf7d0; }
-.when-skip .when-card-header { background: var(--bg-subtle); color: var(--text-muted); }
-.when-card ul { list-style: none; padding: 0.75rem 1rem; margin: 0; }
-.when-card li { padding: 0.3rem 0; color: var(--text-secondary); display: flex; gap: 0.5rem; align-items: flex-start; line-height: 1.4; }
-.when-card li::before { flex-shrink: 0; font-weight: 700; margin-top: 1px; }
-.when-use li::before { content: "✓"; color: var(--step-h); }
-.when-skip li::before { content: "—"; color: var(--text-muted); }
 
 /* ── C.H.A.I. ── */
 .chai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0; }
@@ -285,8 +273,8 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
   .hack-cell { border-right: none; border-bottom: 1px solid var(--border); }
   .hack-cell:nth-child(odd) { border-right: 1px solid var(--border); }
   .hack-cell:nth-last-child(-n+2) { border-bottom: none; }
-  .w-row, .when-grid, .chai-grid { grid-template-columns: 1fr; }
-  .use-table td, .use-table th { padding: 0.65rem 0.75rem; font-size: 13px; }
+  .w-row, .chai-grid { grid-template-columns: 1fr; }
+  .c4-table td, .c4-table th { padding: 0.65rem 0.75rem; font-size: 13px; }
 }
 @media (max-width: 420px) {
   .hack-strip { grid-template-columns: 1fr; }
@@ -322,15 +310,13 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
        HERO
   ══════════════════════════════════════════════ -->
   <h1>The H.A.C.K. Loop</h1>
-  <p class="subtitle">An evidence-first framework for diagnosing application anomalies and silent failures.</p>
+  <p class="subtitle">An Evidence-First Framework for Diagnosing Application Anomalies, Issues, and Outages</p>
 
-  <p>When production breaks, infrastructure metrics often stay green. CPU is within bounds. Error counters hold zero. Nothing in the usual dashboards explains what is wrong. Yet user journeys are silently failing — operations initiated and never resolved, conversions dropping to zero without a single logged exception.</p>
+  <p class="formula-line">USE + Funnel Analysis + H.A.C.K. — Building on Brendan Gregg's <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a> with journey-level application observability.</p>
 
-  <p>This is the class of failure the H.A.C.K. Loop is designed to expose and investigate.</p>
+  <p>When production breaks, the instinct is to guess, patch, and see if the bleeding stops. The H.A.C.K. Loop builds on Brendan Gregg's evidence-first USE Method, adding Funnel Analysis to expose journey-level failures that infrastructure metrics can miss.</p>
 
-  <div class="key-insight">
-    USE sees the component. Funnel Analysis sees the journey. H.A.C.K. investigates the gap.
-  </div>
+  <p>Here, Funnel Analysis means event-flow accounting across an application journey — not simply product or marketing conversion analysis.</p>
 
   <!-- ══════════════════════════════════════════════
        FRAMEWORK
@@ -494,39 +480,6 @@ HAVING net_hanging_promises > 0;</code></pre>
   </div>
 
   <!-- ══════════════════════════════════════════════
-       WHEN TO USE
-  ══════════════════════════════════════════════ -->
-  <h2 id="when-to-use">When to Use H.A.C.K.</h2>
-
-  <p>H.A.C.K. is designed for a specific class of failure where component health signals diverge from application journey health. It is a targeted diagnostic tool, not a universal incident framework.</p>
-
-  <div class="when-grid">
-    <div class="when-card when-use">
-      <div class="when-card-header">Use H.A.C.K. when</div>
-      <ul>
-        <li>Infrastructure looks healthy but users are failing</li>
-        <li>Error rates are normal but conversion drops</li>
-        <li>Asynchronous operations don't reach a terminal state</li>
-        <li>A third-party SDK crosses an application boundary</li>
-        <li>Multiple runtimes participate in one user journey</li>
-        <li>Retries are obscuring the original failure</li>
-        <li>The failure appears as a missing state, not an explicit error</li>
-        <li>Teams are debating ownership without boundary evidence</li>
-      </ul>
-    </div>
-    <div class="when-card when-skip">
-      <div class="when-card-header">Less necessary when</div>
-      <ul>
-        <li>Failure has a well-observed terminal cause</li>
-        <li>CPU saturation or resource exhaustion is confirmed</li>
-        <li>A database or dependency outage is known</li>
-        <li>Explicit HTTP 5xx errors identify the source</li>
-        <li>A recent deployment is clearly and causally correlated</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════════════
        ANTI-PATTERNS
   ══════════════════════════════════════════════ -->
   <h2 id="antipatterns">Operational Anti-Patterns</h2>
@@ -651,59 +604,6 @@ HAVING net_hanging_promises > 0;</code></pre>
   <div class="key-insight">
     AI can accelerate the loop. Evidence closes it.
   </div>
-
-  <!-- ══════════════════════════════════════════════
-       USE METHOD RELATIONSHIP
-  ══════════════════════════════════════════════ -->
-  <h2 id="use-method">Relationship to the USE Method</h2>
-
-  <p>H.A.C.K. complements <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">Brendan Gregg's USE Method</a> rather than replacing it. USE and Funnel Analysis answer different questions. H.A.C.K. provides the investigation discipline when those answers diverge.</p>
-
-  <table class="use-table">
-    <thead>
-      <tr>
-        <th>Approach</th>
-        <th>Primary Question</th>
-        <th>Focus</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>USE Method</td>
-        <td>Are system resources under pressure or exhibiting failures?</td>
-        <td>Component — Utilization, Saturation, and Errors at each resource.</td>
-      </tr>
-      <tr>
-        <td>Funnel Analysis</td>
-        <td>Did the application journey complete as expected?</td>
-        <td>Journey — Event transitions and terminal outcomes across boundaries.</td>
-      </tr>
-      <tr>
-        <td>H.A.C.K. Loop</td>
-        <td>How do we investigate the gap between those two signals?</td>
-        <td>Investigation — Baseline, isolate, validate, preserve knowledge.</td>
-      </tr>
-    </tbody>
-  </table>
-
-<div class="ascii-diagram">
-            <span class="highlight">APPLICATION OBSERVABILITY</span>
-                         │
-          ┌──────────────┴──────────────┐
-          │                             │
-   <span class="highlight">COMPONENT HEALTH</span>             <span class="highlight">JOURNEY HEALTH</span>
-          │                             │
-      USE METHOD                 FUNNEL ANALYSIS
-   (Util / Sat / Err)      (Inputs = Outputs + ΔB + Sinks)
-          │                             │
-          └──────────────┬──────────────┘
-                         │
-                   <span class="highlight">H.A.C.K. LOOP</span>
-                         │
-             Evidence → Validation → Knowledge
-</div>
-
-  <p>Component health and journey health answer different questions. A system can pass every USE check and simultaneously fail its users. H.A.C.K. provides the diagnostic discipline to investigate when those signals diverge.</p>
 
   <!-- ══════════════════════════════════════════════
        CLOSING
