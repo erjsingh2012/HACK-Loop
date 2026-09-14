@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The H.A.C.K. Loop — Evidence-First Incident Diagnosis</title>
-<meta name="description" content="An evidence-first framework for diagnosing application anomalies, issues, and outages. Built on Brendan Gregg's USE Method with journey-level Funnel Analysis.">
+<title>The H.A.C.K. Loop Specification | Journey-Level Observability</title>
+<meta name="description" content="An evidence-first framework for diagnosing application anomalies, issues, and outages. Built on Brendan Gregg's USE Method.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <style>
@@ -16,12 +15,12 @@
 
   :root {
     --text: #242424;
-    --text-secondary: #6b6b6b;
-    --text-muted: #a8a8a8;
-    --border: #e8e8e8;
+    --text-secondary: #555;
+    --text-muted: #888;
+    --border: #e5e7eb;
     --bg: #fff;
-    --bg-code: #f2f2f2;
-    --accent: #1a8917;
+    --bg-code: #f9fafb;
+    --accent: #111827;
     --serif: 'Source Serif 4', Georgia, serif;
     --sans: 'Inter', system-ui, sans-serif;
     --mono: 'JetBrains Mono', 'Fira Code', monospace;
@@ -33,12 +32,11 @@
 
   html { scroll-behavior: smooth; }
 
-  /* ── Reading progress bar ── */
   #progress-bar {
     position: fixed;
     top: 0; left: 0;
     height: 3px;
-    background: #1a8917;
+    background: var(--accent);
     width: 0%;
     z-index: 999;
     transition: width 0.1s linear;
@@ -48,857 +46,186 @@
     font-family: var(--serif);
     background: var(--bg);
     color: var(--text);
-    font-size: 20px;
-    line-height: 1.8;
+    font-size: 19px;
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── Publication header ── */
   .pub-header {
     border-bottom: 1px solid var(--border);
     padding: 1rem 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background: #fafafa;
   }
 
   .pub-name {
-    font-family: var(--sans);
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
     letter-spacing: -0.01em;
   }
 
-  .pub-nav {
-    display: flex;
-    gap: 1.5rem;
-  }
-
+  .pub-nav { display: flex; gap: 1.5rem; }
   .pub-nav a {
     font-family: var(--sans);
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-secondary);
     text-decoration: none;
+    font-weight: 500;
   }
+  .pub-nav a:hover { color: var(--accent); }
 
-  .pub-nav a:hover { color: var(--text); }
-
-  /* ── Article wrapper ── */
   article {
-    max-width: 680px;
+    max-width: 720px;
     margin: 0 auto;
     padding: 3rem 1.5rem 6rem;
   }
 
-  /* ── Hero ── */
-  .article-tag {
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 1.25rem;
-  }
-
   h1 {
-    font-family: var(--serif);
-    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-family: var(--sans);
+    font-size: clamp(2rem, 5vw, 2.5rem);
     font-weight: 700;
     line-height: 1.18;
     letter-spacing: -0.02em;
-    color: var(--text);
-    margin-bottom: 1rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
   }
 
   .subtitle {
     font-size: 1.25rem;
     color: var(--text-secondary);
-    line-height: 1.55;
-    margin-bottom: 1.75rem;
-    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 2rem;
   }
 
-  /* ── Author row ── */
-  .author-row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1.25rem 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 2.5rem;
-  }
-
-  .author-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: #1d4ed8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 500;
-    color: #fff;
-    flex-shrink: 0;
-  }
-
-  .author-meta {
-    flex: 1;
-  }
-
-  .author-name {
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-    display: block;
-  }
-
-  .author-details {
-    font-family: var(--sans);
+  /* Specification Metadata Block */
+  .spec-meta {
+    font-family: var(--mono);
     font-size: 13px;
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+    margin-bottom: 2.5rem;
     color: var(--text-secondary);
+    line-height: 1.6;
   }
+  .spec-meta strong { color: var(--accent); font-weight: 600; }
+  .spec-meta a { color: var(--step-c); text-decoration: none; }
+  .spec-meta a:hover { text-decoration: underline; }
 
-  .author-details a {
-    color: var(--accent);
-    text-decoration: none;
-  }
+  p { margin-bottom: 1.5rem; }
+  a { color: inherit; text-decoration: underline; text-decoration-color: #ccc; text-underline-offset: 3px; }
+  a:hover { text-decoration-color: var(--accent); }
+  strong { font-weight: 600; color: var(--accent); }
 
-  /* ── Body text ── */
-  p {
-    margin-bottom: 1.5rem;
-    color: var(--text);
-  }
-
-  a {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-color: var(--border);
-    text-underline-offset: 3px;
-  }
-
-  a:hover { text-decoration-color: var(--text); }
-
-  strong { font-weight: 600; }
-
-  /* ── Section headings ── */
   h2 {
-    font-family: var(--serif);
-    font-size: 1.6rem;
+    font-family: var(--sans);
+    font-size: 1.5rem;
     font-weight: 700;
     letter-spacing: -0.015em;
-    line-height: 1.25;
-    color: var(--text);
-    margin: 2.5rem 0 0.75rem;
+    color: var(--accent);
+    margin: 3rem 0 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
   }
-
+  
   h3 {
-    font-family: var(--serif);
+    font-family: var(--sans);
     font-size: 1.15rem;
     font-weight: 600;
-    color: var(--text);
     margin: 2rem 0 0.5rem;
   }
 
-  /* ── Divider ── */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 2.5rem 0;
-  }
-
-  .section-break {
-    text-align: center;
-    margin: 2.5rem 0;
-    color: var(--text-muted);
-    font-size: 1.2rem;
-    letter-spacing: 0.4em;
-  }
-
-  /* ── Blockquote / pullquote ── */
   blockquote {
-    border-left: 3px solid var(--text);
+    border-left: 3px solid var(--accent);
     margin: 2rem 0;
-    padding: 0.25rem 0 0.25rem 1.5rem;
+    padding: 0.5rem 0 0.5rem 1.5rem;
     font-size: 1.15rem;
     font-style: italic;
     color: var(--text-secondary);
-    line-height: 1.65;
+    background: var(--bg-code);
   }
 
-  /* ── HACK loop strip ── */
+  /* Core UI Components */
   .hack-strip {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     border: 1px solid var(--border);
     border-radius: 6px;
-    overflow: hidden;
     margin: 2rem 0;
-  }
-
-  .hack-cell {
-    padding: 1.25rem 1rem;
-    border-right: 1px solid var(--border);
     background: #fafafa;
   }
-
+  .hack-cell { padding: 1.25rem 1rem; border-right: 1px solid var(--border); }
   .hack-cell:last-child { border-right: none; }
-
-  .hack-letter {
-    font-family: var(--mono);
-    font-size: 1.6rem;
-    font-weight: 600;
-    line-height: 1;
-    margin-bottom: 0.4rem;
-  }
-
-  .hack-name {
-    font-family: var(--sans);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 0.35rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  .hack-desc {
-    font-family: var(--sans);
-    font-size: 12px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    margin-bottom: 0.75rem;
-  }
-
-  .hack-deliverable {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-muted);
-    padding-top: 0.6rem;
-    border-top: 1px solid var(--border);
-  }
+  .hack-letter { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .hack-name { font-family: var(--sans); font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 0.35rem; }
+  .hack-desc { font-family: var(--sans); font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
 
   .cell-h .hack-letter { color: var(--step-h); }
   .cell-a .hack-letter { color: var(--step-a); }
   .cell-c .hack-letter { color: var(--step-c); }
   .cell-k .hack-letter { color: var(--step-k); }
 
-  /* ── Equation ── */
   .equation {
     background: #fafafa;
     border: 1px solid var(--border);
-    border-left: 3px solid #6b6b6b;
-    border-radius: 4px;
-    padding: 1.1rem 1.5rem;
-    margin: 1.5rem 0;
-    font-family: var(--mono);
-    font-size: 15px;
-    color: var(--text);
-  }
-
-  .eq-parts {
-    margin-top: 0.75rem;
-    display: grid;
-    gap: 0.2rem;
-    font-size: 13px;
-  }
-
-  .eq-parts span {
-    color: var(--text-secondary);
-    padding-left: 1rem;
-    display: block;
-  }
-
-  .eq-parts b {
-    color: var(--text);
-    font-weight: 500;
-  }
-
-  /* ── Code ── */
-  pre {
-    background: var(--bg-code) !important;
-    border-radius: 4px;
-    padding: 1.1rem 1.25rem;
-    overflow-x: auto;
-    margin: 1.5rem 0;
-    font-size: 13px;
-    line-height: 1.65;
-    border: 1px solid var(--border);
-  }
-
-  code {
-    font-family: var(--mono);
-    font-size: 0.85em;
-    background: var(--bg-code);
-    padding: 0.1em 0.35em;
-    border-radius: 3px;
-    color: var(--text);
-  }
-
-  pre code {
-    background: none;
-    padding: 0;
-    font-size: inherit;
-    color: inherit;
-  }
-
-  /* ── Funnel bars ── */
-  .funnel-block {
-    background: #fafafa;
-    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
     border-radius: 4px;
     padding: 1.25rem 1.5rem;
-    margin: 1.5rem 0;
-    font-family: var(--mono);
-  }
-
-  .funnel-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .funnel-row:last-of-type { margin-bottom: 0; }
-
-  .funnel-lbl {
-    font-size: 11px;
-    color: var(--text-secondary);
-    min-width: 200px;
-    line-height: 1.3;
-  }
-
-  .funnel-track {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .funnel-bar {
-    height: 8px;
-    border-radius: 2px;
-  }
-
-  .funnel-pct {
-    font-size: 12px;
-    color: var(--text-muted);
-    min-width: 36px;
-  }
-
-  .bar-g { background: #16a34a; }
-  .bar-b { background: #2563eb; }
-  .bar-r { background: #dc2626; }
-
-  .funnel-note {
-    font-size: 12px;
-    color: var(--step-a);
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--border);
-  }
-
-  /* ── Three W's ── */
-  .w-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    margin: 1.5rem 0;
-  }
-
-  .w-cell {
-    background: #fafafa;
-    padding: 1.1rem 1rem;
-  }
-
-  .w-q {
-    font-family: var(--mono);
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 0.4rem;
-  }
-
-  .w-label {
-    font-family: var(--sans);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 0.35rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  .w-desc {
-    font-family: var(--sans);
-    font-size: 12px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-  }
-
-  /* ── C4 table ── */
-  .c4-table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    margin: 1.5rem 0;
-    font-family: var(--sans);
-    font-size: 14px;
-  }
-
-  .c4-table th {
-    background: #fafafa;
-    padding: 0.6rem 1rem;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .c4-table td {
-    padding: 0.75rem 1rem;
-    color: var(--text-secondary);
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
-
-  .c4-table tr:last-child td { border-bottom: none; }
-
-  .c4-table td:first-child {
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-    font-size: 13px;
-  }
-
-  /* ── Anti-pattern ── */
-  .antipattern {
     margin: 2rem 0;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .antipattern:last-of-type { border-bottom: none; }
-
-  .ap-header {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    margin-bottom: 0.75rem;
-  }
-
-  .ap-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
-
-  .ap-title {
-    font-family: var(--serif);
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .ap-quote {
-    font-family: var(--sans);
-    font-size: 13px;
-    color: var(--text-muted);
-    font-style: italic;
-    margin-top: 0.2rem;
-  }
-
-  .antipattern p {
-    font-size: 18px;
-    margin-bottom: 1rem;
-  }
-
-  .ap-label {
-    font-family: var(--sans);
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.3rem;
-  }
-
-  .ap-why, .ap-how {
-    font-family: var(--sans);
-    font-size: 14px;
-    color: var(--text-secondary);
-    padding: 0.6rem 0.9rem;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-    line-height: 1.55;
-  }
-
-  .ap-why { background: #fef2f2; border-left: 2px solid #fca5a5; }
-  .ap-how { background: #eff6ff; border-left: 2px solid #93c5fd; }
-
-  /* ── CHAI grid ── */
-  .chai-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    margin: 1.5rem 0;
-  }
-
-  .chai-cell {
-    background: #fafafa;
-    padding: 1.1rem 1.1rem;
-  }
-
-  .chai-tag {
     font-family: var(--mono);
-    font-size: 11px;
-    color: var(--step-c);
-    margin-bottom: 0.3rem;
-  }
-
-  .chai-title {
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 0.4rem;
-  }
-
-  .chai-body {
-    font-family: var(--sans);
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.55;
-  }
-
-  /* ── Case study ── */
-  .case-study {
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    margin: 1.5rem 0;
-  }
-
-  .cs-header {
-    background: #fff5f5;
-    border-bottom: 1px solid var(--border);
-    padding: 0.9rem 1.25rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: var(--sans);
-  }
-
-  .cs-badge {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--step-a);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  .cs-signal { font-size: 12px; color: var(--text-muted); }
-
-  .cs-body { padding: 1.5rem 1.25rem; }
-
-  .step-row {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    margin: 1.5rem 0 0.6rem;
-  }
-
-  .step-row:first-child { margin-top: 0; }
-
-  .step-pill {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 0.2rem 0.55rem;
-    border-radius: 4px;
-    flex-shrink: 0;
-  }
-
-  .pill-h { background: #dcfce7; color: var(--step-h); }
-  .pill-a { background: #fee2e2; color: var(--step-a); }
-  .pill-c { background: #dbeafe; color: var(--step-c); }
-  .pill-k { background: #fef3c7; color: var(--step-k); }
-
-  .step-label {
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  .cs-body p {
-    font-family: var(--sans);
     font-size: 15px;
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
   }
+  .eq-parts { margin-top: 1rem; display: grid; gap: 0.4rem; font-size: 13px; }
+  .eq-parts span { color: var(--text-secondary); padding-left: 1rem; display: block; }
 
-  .outcome-row {
-    font-family: var(--sans);
-    font-size: 13px;
-    color: var(--text-secondary);
-    padding: 0.55rem 0.75rem;
-    border-radius: 4px;
-    margin-bottom: 0.4rem;
-    line-height: 1.5;
-  }
-
-  .outcome-row.resolution { background: #f0fdf4; border-left: 2px solid #86efac; }
-  .outcome-row.prevention { background: #eff6ff; border-left: 2px solid #93c5fd; }
-
-  /* ── USE comparison ── */
-  .use-table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid var(--border);
+  pre {
+    background: var(--bg-code) !important;
     border-radius: 6px;
-    overflow: hidden;
-    margin: 1.5rem 0;
-    font-family: var(--sans);
-    font-size: 14px;
-  }
-
-  .use-table th {
-    background: #fafafa;
-    padding: 0.6rem 1rem;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .use-table td {
-    padding: 0.75rem 1rem;
-    color: var(--text-secondary);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .use-table tr:last-child td { border-bottom: none; }
-
-  .use-table td:first-child {
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-  }
-
-  /* ── ASCII diagram ── */
-  .ascii {
-    background: #fafafa;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.65;
+    padding: 1.25rem;
     overflow-x: auto;
-    white-space: pre;
-  }
-
-  /* ── Topic tags ── */
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 1.75rem 0 0;
-  }
-
-  .tag {
-    font-family: var(--sans);
+    margin: 1.5rem 0;
     font-size: 13px;
-    color: var(--text-secondary);
-    background: #f2f2f2;
-    padding: 0.3rem 0.75rem;
-    border-radius: 100px;
-    text-decoration: none;
-  }
-
-  .tag:hover { background: #e8e8e8; color: var(--text); text-decoration: none; }
-
-  /* ── Clap / share row ── */
-  .engage-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    margin: 2.5rem 0;
-  }
-
-  .clap-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--sans);
-    font-size: 14px;
-    color: var(--text-secondary);
-    background: none;
     border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 0.45rem 1rem;
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
+  }
+  code { font-family: var(--mono); font-size: 0.85em; background: var(--bg-code); padding: 0.1em 0.35em; border-radius: 3px; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  .w-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: var(--border); border: 1px solid var(--border); border-radius: 6px; margin: 2rem 0;
+  }
+  .w-cell { background: #fafafa; padding: 1.25rem; }
+  .w-q { font-family: var(--mono); font-size: 15px; font-weight: 600; margin-bottom: 0.4rem; }
+  .w-desc { font-family: var(--sans); font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .c4-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); margin: 2rem 0; font-family: var(--sans); font-size: 14px; }
+  .c4-table th { background: #fafafa; padding: 0.75rem 1rem; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+  .c4-table td { padding: 1rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); }
+  .c4-table td:first-child { font-weight: 600; color: var(--accent); }
+
+  .case-study { border: 1px solid var(--border); border-radius: 6px; margin: 2rem 0; font-family: var(--sans); }
+  .cs-header { background: #fef2f2; border-bottom: 1px solid var(--border); padding: 1rem 1.25rem; font-weight: 600; color: var(--step-a); text-transform: uppercase; font-size: 12px; }
+  .cs-body { padding: 1.5rem; font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+  .cs-body p { margin-bottom: 1rem; }
+  
+  .ascii {
+    background: #fafafa; border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem; margin: 2rem 0;
+    font-family: var(--mono); font-size: 12px; line-height: 1.6; overflow-x: auto; white-space: pre;
   }
 
-  .clap-btn:hover { border-color: var(--text); color: var(--text); }
-
-  .clap-btn.clapped { border-color: #1a8917; color: #1a8917; }
-
-  .clap-icon { font-size: 1.1rem; }
-
-  .share-links {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-family: var(--sans);
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
-
-  .share-links a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    padding: 0.35rem 0.7rem;
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    transition: border-color 0.15s, color 0.15s;
-  }
-
-  .share-links a:hover { border-color: var(--text); color: var(--text); text-decoration: none; }
-
-  /* ── Originally published ── */
-  .orig-pub {
-    background: #fafafa;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 1rem 1.25rem;
-    margin: 2rem 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-family: var(--sans);
-    font-size: 14px;
-    color: var(--text-secondary);
-  }
-
-  .orig-pub a {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .orig-pub a:hover { text-decoration: underline; }
-
-  /* ── Author card (bottom) ── */
-  .author-card {
-    background: #fafafa;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin: 2.5rem 0;
-    display: flex;
-    gap: 1.1rem;
-    align-items: flex-start;
-  }
-
-  .author-card-avatar {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: #1d4ed8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--sans);
-    font-size: 16px;
-    font-weight: 500;
-    color: #fff;
-    flex-shrink: 0;
-  }
-
-  .author-card-body { flex: 1; }
-
-  .author-card-name {
-    font-family: var(--sans);
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--text);
-    margin-bottom: 0.25rem;
-  }
-
-  .author-card-bio {
-    font-family: var(--sans);
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.55;
-    margin-bottom: 0.6rem;
-  }
-
-  .author-card-link {
-    font-family: var(--sans);
-    font-size: 13px;
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .author-card-link:hover { text-decoration: underline; }
-
-  /* ── Closing ── */
-  .closing-line {
-    font-size: 1.05rem;
-    color: var(--text-secondary);
-    font-style: italic;
-    border-top: 1px solid var(--border);
-    padding-top: 2rem;
-    margin-top: 2.5rem;
-  }
-
-  /* ── Footer ── */
   footer {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
-    border-top: 1px solid var(--border);
-    font-family: var(--sans);
-    font-size: 13px;
-    color: var(--text-muted);
+    max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px solid var(--border);
+    font-family: var(--sans); font-size: 13px; color: var(--text-muted); text-align: center;
   }
-
-  footer a { color: var(--text-secondary); text-decoration: none; }
-  footer a:hover { color: var(--text); }
-
-  /* ── Responsive ── */
+  
   @media (max-width: 600px) {
-    .hack-strip { grid-template-columns: 1fr 1fr; }
-    .w-row { grid-template-columns: 1fr; }
-    .chai-grid { grid-template-columns: 1fr; }
-    .pub-nav { display: none; }
-    body { font-size: 18px; }
+    .hack-strip, .w-row { grid-template-columns: 1fr; }
+    body { font-size: 17px; }
   }
 </style>
 </head>
@@ -906,7 +233,7 @@
 
 <div id="progress-bar"></div>
 <header class="pub-header">
-  <div class="pub-name">H.A.C.K. Loop</div>
+  <div class="pub-name">Canonical Spec / H.A.C.K. Loop</div>
   <nav class="pub-nav">
     <a href="#antipatterns">Anti-patterns</a>
     <a href="#casestudy">Case study</a>
@@ -915,367 +242,125 @@
 </header>
 
 <article>
-
-  <!-- ── Title block ── -->
-  <p class="article-tag">Systems Observability</p>
   <h1>The H.A.C.K. Loop</h1>
-  <p class="subtitle">An evidence-first framework for diagnosing application anomalies, issues, and outages — built on Brendan Gregg's <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a> with journey-level Funnel Analysis.</p>
+  <p class="subtitle">An evidence-first framework for diagnosing application anomalies and silent failures. Built to extend Brendan Gregg's USE Method with journey-level event accounting.</p>
 
-  <div class="tags">
-    <a class="tag" href="#">Systems Observability</a>
-    <a class="tag" href="#">Incident Response</a>
-    <a class="tag" href="#">Site Reliability</a>
-    <a class="tag" href="#">Engineering</a>
-    <a class="tag" href="#">Debugging</a>
+  <div class="spec-meta">
+    <strong>Author:</strong> Jatinderpal Singh<br>
+    <strong>Domain:</strong> Systems Observability & Incident Response<br>
+    <strong>Status:</strong> Published Specification<br>
+    <strong>Link:</strong> <a href="https://erjsingh2012.github.io/HACK-Loop/">erjsingh2012.github.io/HACK-Loop/</a>
   </div>
 
-  <!-- ── Intro ── -->
-  <p>When production breaks, the instinct is to guess, patch, and see if the bleeding stops. The H.A.C.K. Loop builds on Brendan Gregg's evidence-first USE Method, adding Funnel Analysis to expose journey-level failures that infrastructure metrics can miss.</p>
+  <p>When production breaks, the instinct is to guess, patch, and see if the bleeding stops. The H.A.C.K. Loop builds on Brendan Gregg's evidence-first USE Method, adding event-flow accounting to expose journey-level failures that node-level infrastructure metrics frequently miss.</p>
 
-  <p>Here, Funnel Analysis means event-flow accounting across an application journey — not simply product or marketing conversion analysis.</p>
-
-  <!-- ── Loop grid ── -->
   <div class="hack-strip">
     <div class="hack-cell cell-h">
       <div class="hack-letter">H</div>
       <div class="hack-name">Health</div>
-      <div class="hack-desc">Establish execution-path baselines through Funnel Analysis before changing any code.</div>
-      <div class="hack-deliverable">Funnel Baseline Telemetry</div>
+      <div class="hack-desc">Establish execution-path baselines through event boundaries before changing any code.</div>
     </div>
     <div class="hack-cell cell-a">
       <div class="hack-letter">A</div>
       <div class="hack-name">Anomaly</div>
       <div class="hack-desc">Isolate telemetry divergence and narrow the failure domain into a testable hypothesis.</div>
-      <div class="hack-deliverable">Hypothesis Elimination Log</div>
     </div>
     <div class="hack-cell cell-c">
       <div class="hack-letter">C</div>
       <div class="hack-name">Candidate Fix</div>
       <div class="hack-desc">Deploy the smallest diagnostic-first intervention needed to validate the hypothesis.</div>
-      <div class="hack-deliverable">Diagnostic Trap / Hotfix</div>
     </div>
     <div class="hack-cell cell-k">
       <div class="hack-letter">K</div>
       <div class="hack-name">Knowledge</div>
-      <div class="hack-desc">Convert evidence and outcomes into permanent fixes, regression tests, and runbooks.</div>
-      <div class="hack-deliverable">Postmortem / Runbook</div>
+      <div class="hack-desc">Convert evidence into permanent fixes, regression tests, and canonical runbooks.</div>
     </div>
   </div>
 
-  <hr class="divider">
-
-  <!-- ── Component vs Funnel ── -->
   <h2>Component Health vs. Funnel Failure</h2>
-
   <p><strong>USE sees the component. Funnel Analysis sees the journey.</strong></p>
+  <p>Traditional infrastructure monitoring asks whether individual resources are healthy: CPU, memory, disk I/O, and errors. But application failures can leave almost no footprint at the infrastructure layer. A silent API hang, an unresolved promise, or a stalled native bridge can leave CPU at 2% while user conversion approaches 0%.</p>
 
-  <p>Traditional infrastructure monitoring asks whether individual resources are healthy: CPU, memory, disk I/O, queues, and errors. But application failures can leave almost no footprint at the infrastructure layer. A silent API hang, an unresolved promise, a stalled third-party SDK, or a failure at a geographic edge can leave CPU at 2% while user conversion approaches 0%.</p>
-
-  <p>The key idea is event accounting: define observable boundaries in the journey and reconcile what enters each boundary with what leaves it. The governing equation:</p>
+  <p>The key idea is event conservation at system boundaries. The governing equation:</p>
 
   <div class="equation">
-    Input Events = Output Events + ΔBuffer + Sinks
+    Inputs = Outputs + ΔBuffer + Sinks
     <div class="eq-parts">
-      <span><b>Output</b> — happy-path completion</span>
-      <span><b>ΔBuffer</b> — queued, in-flight, or awaiting retry</span>
-      <span><b>Sinks</b> — failure, error, expiration, cancellation, or discard</span>
+      <span><b>Outputs</b> — successfully resolved terminal state transitions</span>
+      <span><b>ΔBuffer</b> — active, in-flight async operations bounded by time Δt</span>
+      <span><b>Sinks</b> — explicitly caught, handled, and terminal exception pathways</span>
     </div>
   </div>
 
-  <p>A conventional failure takes a path. A <code>catch</code> block fires. A timeout resolves. An error counter increments. But an operation that never settles bypasses every one of those mechanisms — it neither succeeds nor fails. A server can remain almost completely idle while thousands of user operations are stuck waiting for something that will never happen.</p>
+  <p>A conventional failure takes a path. A <code>catch</code> block fires. A timeout resolves. An error counter increments. But an operation that never settles bypasses every one of those mechanisms — it neither succeeds nor fails. A server can remain almost completely idle while thousands of user operations are stuck waiting for a callback that will never arrive.</p>
 
-  <p>An unexplained remainder is itself a signal: either the system lost the event, or the instrumentation failed to account for it.</p>
-
-  <hr class="divider">
-
-  <!-- ── Diagnostic Readiness ── -->
   <h2>Diagnostic Readiness</h2>
+  <h3>Dimensioned Baselines</h3>
+  <p>Establish conversion baselines across meaningful dimensions: OS, runtime, hardware tier, network path, and app version. <em>Healthy cannot be defined during an outage — it must be established before one.</em></p>
 
-  <h3>Dimensioned Baselines — What does healthy look like?</h3>
-  <p>Establish conversion and resolution baselines across meaningful dimensions: OS, runtime, hardware tier, region, network path, app version, and temporal cycles. Healthy cannot be defined during an outage — it must be established before one.</p>
+  <h3>Dynamic Instrumentation</h3>
+  <p>Use runtime feature flags, targeted tracing, and dynamic hooks (like eBPF/BCC-style probes) to expose otherwise invisible execution paths without requiring a full service redeployment. If a critical path cannot be observed, diagnosis becomes inference rather than evidence.</p>
 
-  <h3>USE + Funnel Matrix — Where is the pressure or loss?</h3>
-  <p>Pair node-level resource signals with path-level event accounting. Track Utilization, Saturation, and Errors alongside event ingress, transitions, terminal outcomes, queues, retries, and unresolved operations. USE identifies pressure at the component; Funnel Analysis identifies loss across the journey.</p>
-
-  <h3>Sampling Normalization — Can we trust the numbers?</h3>
-  <p>Use aggressive sampling for high-volume healthy paths while retaining failures at a higher sampling rate, ideally 100% for critical failure signals. For unbiased probabilistic sampling, estimated volume can be recovered through inverse-probability weighting (<code>1 / sample_rate</code>). At a 5% sampling rate, an observed count can be scaled by 20.</p>
-
-  <h3>Dynamic Instrumentation — Can we see the dark path?</h3>
-  <p>Use runtime feature flags, targeted tracing, and dynamic instrumentation such as eBPF/BCC-style hooks to expose otherwise invisible execution paths without requiring a full service redeployment. If a critical path cannot be observed, diagnosis becomes inference rather than evidence.</p>
-
-  <p>Anomaly detection should operate on two planes: <strong>absolute</strong> (a metric crossed a defined threshold) and <strong>relative</strong> (a metric diverged materially from its historical behavior, even without crossing a hard threshold). A 38% resolution rate might look stable in isolation. Compare it with last Tuesday's 97%, and the anomaly becomes obvious.</p>
-
-  <hr class="divider">
-
-  <!-- ── C4 ── -->
-  <h2>Pre-Incident Architecture Mapping</h2>
-
-  <p>Layering Funnel Analysis onto the <a href="https://c4model.com/" target="_blank" rel="noopener">C4 Model</a> provides a structured way to map diagnostic coverage before an outage occurs.</p>
-
+  <h2>Pre-Incident Architecture Mapping (C4)</h2>
   <table class="c4-table">
     <thead>
-      <tr><th>Level</th><th>Focus</th></tr>
+      <tr><th>Level</th><th>Focus Boundary</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td>1 — System Context</td>
-        <td>Conversion and failure drop-offs across external boundaries: third-party vendor APIs, payment processors, social authentication flows, and cross-border gateways.</td>
+        <td>System Context</td>
+        <td>Conversion drop-offs across external boundaries: third-party APIs, native platforms (GDK/WebView2), and payment gateways.</td>
       </tr>
       <tr>
-        <td>2 — Containers</td>
-        <td>Transitions between runtime environments, microservices, and databases using cross-boundary tracer strings such as <code>session_start → auth_ok → ad_req</code>, together with latency measurements (ΔT).</td>
+        <td>Containers</td>
+        <td>Transitions between runtimes (e.g., C# Managed to C++ Native) tracked with latency measurements (Δt).</td>
       </tr>
       <tr>
-        <td>3 — Components</td>
-        <td>Internal execution flows and drop-offs across application modules such as <code>AdLoadManager → SDK Adapter → Retry Handler</code>. Narrows the failure domain to the specific component boundary.</td>
+        <td>Components</td>
+        <td>Internal execution flows across modules. Narrows the failure domain to a specific boundary.</td>
       </tr>
       <tr>
-        <td>4 — Code</td>
-        <td>Lowest-level execution points around async operations: <code>Promise.race()</code> wrappers, explicit timeouts, fallback metrics, thread dumps, and targeted diagnostic hooks.</td>
+        <td>Code</td>
+        <td>Lowest-level async execution: <code>Promise.race()</code> wrappers, explicit timeouts, and targeted diagnostic hooks.</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>The Three W's</h2>
-  <p>At each boundary, Funnel Analysis answers the same three questions:</p>
-
   <div class="w-row">
     <div class="w-cell">
       <div class="w-q">Where?</div>
-      <div class="w-label">Location</div>
-      <div class="w-desc">Which boundary, service, dependency, or code path stopped accounting for events?</div>
+      <div class="w-desc">Which boundary, runtime, or code path stopped accounting for events?</div>
     </div>
     <div class="w-cell">
       <div class="w-q">Which?</div>
-      <div class="w-label">Dimension</div>
-      <div class="w-desc">Which geography, language, OS, app version, network condition, or hardware tier?</div>
+      <div class="w-desc">Which geography, language, OS, or hardware tier is isolating the failure?</div>
     </div>
     <div class="w-cell">
       <div class="w-q">When?</div>
-      <div class="w-label">Temporal anchor</div>
-      <div class="w-desc">When was the funnel last balanced, providing the anchor for the investigation?</div>
+      <div class="w-desc">When was the event funnel last balanced, anchoring the investigation?</div>
     </div>
   </div>
 
   <blockquote>Count what entered. Count what exited. Investigate the difference.</blockquote>
 
-  <p>If those questions cannot be answered from available telemetry, the first problem to solve is not the application code. It is the instrumentation gap.</p>
-
-  <hr class="divider">
-
-  <!-- ── Anti-patterns ── -->
-  <h2 id="antipatterns">What H.A.C.K. Prevents</h2>
-
-  <p>Incident anti-patterns share a common structure: action is taken before the failure domain has been established. H.A.C.K. makes these patterns explicit so they can be recognized — and interrupted.</p>
-
-  <div class="antipattern">
-    <div class="ap-header">
-      <span class="ap-icon">🔦</span>
-      <div>
-        <div class="ap-title">The Streetlight Anti-Method</div>
-        <div class="ap-quote">"I only search where my existing tools already look."</div>
-      </div>
-    </div>
-    <p>Searching familiar logs and dashboards instead of investigating the unobserved path. When monitoring covers only the happy path, engineers naturally look there first — even when the failure has already disappeared into a dark path.</p>
-    <div class="ap-label">Why it happens</div>
-    <div class="ap-why">Under pressure, engineers reach for familiar tools. When time is short and stakes are high, the instinct is to search where answers have been found before, rather than where the evidence says the problem may actually be.</div>
-    <div class="ap-label">How to address it</div>
-    <div class="ap-how">Start with 5–10 minutes of surface checks. If no smoking gun emerges, instrument the dark path instead. Isolate the specific journey, count what entered versus what resolved, and let the unexplained gap identify the boundary worth investigating.</div>
-  </div>
-
-  <div class="antipattern">
-    <div class="ap-header">
-      <span class="ap-icon">👉</span>
-      <div>
-        <div class="ap-title">The Cross-Boundary Deflection Anti-Method</div>
-        <div class="ap-quote">"It's probably a third-party vendor or platform problem."</div>
-      </div>
-    </div>
-    <p>Escalating a cross-boundary failure based on intuition rather than evidence. Without measurable evidence at the boundary, a vendor has no reason to act — and no reliable way to reproduce the failure.</p>
-    <div class="ap-label">Why it happens</div>
-    <div class="ap-why">Cross-boundary failures are genuinely harder to prove. Without shared telemetry across both sides, assuming the problem lives somewhere else can feel reasonable. Suspicion is easier to communicate than evidence is to gather.</div>
-    <div class="ap-label">How to address it</div>
-    <div class="ap-how">Isolate the failing journey before escalating. Measure what crossed the boundary, what returned, and what remained unaccounted for. Evidence transforms "your system is broken" into a reproducible signal the other side can investigate.</div>
-  </div>
-
-  <div class="antipattern">
-    <div class="ap-header">
-      <span class="ap-icon">🍺</span>
-      <div>
-        <div class="ap-title">The Drunk Man Anti-Method</div>
-        <div class="ap-quote">"I tweaked a config and the symptom stopped, so we're done."</div>
-      </div>
-    </div>
-    <p>Changing configurations or deploying patches until the metric recovers — without establishing why it recovered.</p>
-    <div class="ap-label">Why it happens</div>
-    <div class="ap-why">Correlation feels like causation under incident pressure. When a change coincides with recovery, the brain naturally connects the two. Once the metric turns green, the team is often too relieved to challenge the explanation.</div>
-    <div class="ap-label">How to address it</div>
-    <div class="ap-how">Before declaring resolution, establish the mechanism. Ask: what changed in the execution path, and why should that change produce this outcome? If the explanation does not hold against the evidence, the symptom may have been masked rather than resolved.</div>
-  </div>
-
-  <div class="antipattern">
-    <div class="ap-header">
-      <span class="ap-icon">🚦</span>
-      <div>
-        <div class="ap-title">The Traffic Light Anti-Method</div>
-        <div class="ap-quote">"Everything is green on the dashboard, so we're healthy."</div>
-      </div>
-    </div>
-    <p>Treating infrastructure health as a proxy for application health. A server can report healthy CPU, memory, disk, and error metrics while users are completely blocked. A client-side SDK can hang indefinitely without creating meaningful server-side pressure.</p>
-    <div class="ap-label">Why it happens</div>
-    <div class="ap-why">Dashboards are optimized around the signals we already know how to measure. Green infrastructure metrics create a false sense of completeness when the user journey itself is not being measured.</div>
-    <div class="ap-label">How to address it</div>
-    <div class="ap-how">Treat infrastructure health as necessary, not sufficient. Pair component-level health with journey-level Funnel Analysis. If the infrastructure is green but conversion is falling, follow the event path rather than the dashboard color.</div>
-  </div>
-
-  <hr class="divider">
-
-  <!-- ── C.H.A.I. ── -->
-  <h2>Accelerating H.A.C.K. with AI (C.H.A.I.)</h2>
-
-  <p>LLMs can accelerate specific points in the H.A.C.K. loop — not by acting as autonomous investigators, but by processing structured evidence and reducing time between observation, hypothesis, and intervention.</p>
-
-  <div class="chai-grid">
-    <div class="chai-cell">
-      <div class="chai-tag">[C] Context</div>
-      <div class="chai-title">Trap Authoring</div>
-      <div class="chai-body">Given an architecture diagram, call graph, or execution trace, an LLM can identify instrumentation gaps and propose diagnostic interventions — <code>Promise.race()</code> wrappers, targeted logging, or eBPF-style trace hooks. Candidate traps for validation, not production changes.</div>
-    </div>
-    <div class="chai-cell">
-      <div class="chai-tag">[H] Health</div>
-      <div class="chai-title">Baseline Parsing</div>
-      <div class="chai-body">Given funnel metrics, log excerpts, or query outputs, an LLM can surface cohort-level patterns and identify divergence across dimensions that aggregate dashboards may hide.</div>
-    </div>
-    <div class="chai-cell">
-      <div class="chai-tag">[A] Anomaly</div>
-      <div class="chai-title">Hypothesis Isolation</div>
-      <div class="chai-body">Given trace dumps, drop-off events, deployment diffs, and dependency signals, an LLM can organize and rank competing hypotheses by their consistency with the available evidence — reducing the hypothesis space before expensive diagnostic work begins.</div>
-    </div>
-    <div class="chai-cell">
-      <div class="chai-tag">[I] Intelligence</div>
-      <div class="chai-title">Knowledge Synthesis</div>
-      <div class="chai-body">Given incident timelines, diagnostic findings, and resolution artifacts, an LLM can synthesize the evidence into postmortems, regression-test scaffolding, investigation checklists, and runbook updates.</div>
-    </div>
-  </div>
-
-  <blockquote>AI can accelerate the loop, but evidence still closes it.</blockquote>
-
-  <hr class="divider">
-
-  <!-- ── Case study ── -->
-  <h2 id="casestudy">Case Study</h2>
-
+  <h2 id="casestudy">Case Study: The Silent Hanging Promise</h2>
   <div class="case-study">
-    <div class="cs-header">
-      <span class="cs-badge">P0 — Revenue Critical</span>
-      <span class="cs-signal">Signal: Ad Funnel Collapse</span>
-    </div>
+    <div class="cs-header">Revenue Critical Validation (Ad/Identity Funnel Collapse)</div>
     <div class="cs-body">
-
-      <div class="step-row">
-        <span class="step-pill pill-h">H</span>
-        <span class="step-label">Health</span>
-      </div>
-      <p>Gameplay engagement remained entirely normal, but interstitial ad impressions plummeted on iOS runtimes without a release rollout.</p>
-
-      <div class="step-row">
-        <span class="step-pill pill-a">A</span>
-        <span class="step-label">Anomaly</span>
-      </div>
-      <p>Discrepancy analysis between <code>ad_request</code> events and terminal <code>ad_load</code> resolutions exposed a pool of unresolved operations:</p>
-
-      <div class="funnel-block">
-        <div class="funnel-row">
-          <div class="funnel-lbl">Requests (ad_request = success)</div>
-          <div class="funnel-track">
-            <div class="funnel-bar bar-g" style="width:100%;"></div>
-            <div class="funnel-pct">100%</div>
-          </div>
-        </div>
-        <div class="funnel-row">
-          <div class="funnel-lbl">Resolved (ad_load success/fail)</div>
-          <div class="funnel-track">
-            <div class="funnel-bar bar-b" style="width:62%;"></div>
-            <div class="funnel-pct">62%</div>
-          </div>
-        </div>
-        <div class="funnel-row">
-          <div class="funnel-lbl">Unaccounted (hanging promises)</div>
-          <div class="funnel-track">
-            <div class="funnel-bar bar-r" style="width:38%;"></div>
-            <div class="funnel-pct">38%</div>
-          </div>
-        </div>
-        <div class="funnel-note">↑ Silent promise hangs — never resolved, never rejected</div>
-      </div>
-
-<pre><code class="language-sql">SELECT
-    counter_date,
-    event_category AS ad_type,
-    COUNT(DISTINCT session_id) AS total_affected_sessions,
-    SUM(CASE WHEN event_name = 'ad_request' AND event_status = 'success' THEN 1 ELSE 0 END) -
-    SUM(CASE WHEN event_name = 'ad_load'   AND event_status IN ('success','fail') THEN 1 ELSE 0 END)
-    AS net_hanging_promises
-FROM telemetry.event_counts
-WHERE app_id = 1000123 AND counter_date >= '2026-02-20'
-GROUP BY counter_date, ad_type
-HAVING net_hanging_promises > 0;</code></pre>
-
-      <div class="step-row">
-        <span class="step-pill pill-c">C</span>
-        <span class="step-label">Candidate Fix</span>
-      </div>
-      <p>A third-party social SDK was failing to settle promises under specific iOS conditions. Standard <code>catch</code> blocks never fired — the operations simply hung indefinitely. The team deployed a 20-second <code>Promise.race()</code> cutoff trap:</p>
-
-<pre><code class="language-js">const adLoadWithTimeout = Promise.race([
-    sdk.loadAd(adUnitId),
-    new Promise((_, reject) =>
-        setTimeout(
-            () => reject(new Error('PLATFORM_SDK_TIMEOUT | Platform: iOS')),
-            20000
-        )
+      <p><strong>[H] Health:</strong> Engagement remained nominal, but ad impressions plummeted on specific runtimes without a new binary rollout.</p>
+      <p><strong>[A] Anomaly:</strong> Discrepancy analysis between intent (<code>request</code>) and resolution (<code>load</code>) exposed a massive ΔBuffer. Operations were entering the native layer but never triggering a success <em>or</em> failure callback. Server/Client CPU remained under 5%.</p>
+      <p><strong>[C] Candidate Fix:</strong> A deterministic boundary trap was deployed to force unresolved state into explicit sinks:</p>
+<pre><code class="language-js">const operationWithTimeout = Promise.race([
+    nativeBridge.executeAsync(payload),
+    new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('NATIVE_BRIDGE_HANG')), 15000)
     )
 ]);</code></pre>
-
-      <div class="step-row">
-        <span class="step-pill pill-k">K</span>
-        <span class="step-label">Knowledge</span>
-      </div>
-      <p>Timeout telemetry provided strong boundary evidence for vendor escalation, leading to vendor-side remediation and permanent sanity-check automation.</p>
-      <div class="outcome-row resolution"><strong>Resolution:</strong> Third-party iOS SDK failed to settle promises → Vendor remediated; production fully restored.</div>
-      <div class="outcome-row prevention"><strong>Prevention:</strong> Unresolved async operations lacked hard cutoffs → Automated 24-hour sanity check suite scheduled.</div>
-
+      <p><strong>[K] Knowledge:</strong> The timeout trap exposed the exact C++ boundary failing to return context. The data was used to unblock the client pipeline and submitted as canonical evidence for vendor/platform escalation.</p>
     </div>
   </div>
 
-  <hr class="divider">
-
-  <!-- ── USE connection ── -->
   <h2>The USE Method Connection</h2>
-
-  <table class="use-table">
-    <thead>
-      <tr><th>Layer</th><th>Method</th><th>Question answered</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Component Health</td>
-        <td><a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a></td>
-        <td>Is this system resource under pressure or producing errors?</td>
-      </tr>
-      <tr>
-        <td>Journey Health</td>
-        <td>Funnel Analysis</td>
-        <td>Did this event make it through the expected application path?</td>
-      </tr>
-      <tr>
-        <td>Diagnostic Discipline</td>
-        <td>H.A.C.K. Loop</td>
-        <td>What does the evidence say, and what does it mean for the fix?</td>
-      </tr>
-    </tbody>
-  </table>
-
   <div class="ascii">        APPLICATION OBSERVABILITY
                    │
       ┌────────────┴────────────┐
@@ -1283,61 +368,25 @@ HAVING net_hanging_promises > 0;</code></pre>
 COMPONENT HEALTH          JOURNEY HEALTH
       │                         │
      USE                  FUNNEL ANALYSIS
-      │                         │
+ (Utilization)            (H.A.C.K. Loop)
       └────────────┬────────────┘
                    │
-                H.A.C.K.
+          Evidence → Validation
                    │
-        Evidence → Validation
-                   │
-                Knowledge</div>
-
-  <p>Component health and journey health answer different questions. H.A.C.K. provides a disciplined way to investigate when those signals diverge.</p>
-
-  <!-- ── Closing ── -->
-  <div class="section-break">· · ·</div>
-
-  <p>The postmortem is what makes the next incident shorter — the record of what failed, where it failed, how evidence exposed it, why the intervention worked, and how the system can automatically catch or prevent that failure class next time.</p>
-
-  <p>The H.A.C.K. Loop is not a checklist.</p>
-
-  <p class="closing-line">It is a habit of thought: <strong>measure, investigate, validate, learn. Repeat.</strong></p>
-
-  <!-- ── Engage row ── -->
-  <div class="engage-row">
-    <div class="share-links">
-      <a href="https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64" target="_blank" rel="noopener">Read original ↗</a>
-      <a href="https://twitter.com/intent/tweet?url=https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64&text=The+H.A.C.K.+Loop+—+Evidence-First+Incident+Diagnosis" target="_blank" rel="noopener">Share</a>
-    </div>
-  </div>
-
-  <!-- ── Author card ── -->
-  <div class="author-card">
-    <div class="author-card-avatar">JS</div>
-    <div class="author-card-body">
-      <div class="author-card-name">Singh Jatinderpal</div>
-      <div class="author-card-bio">Engineering lead and systems thinker. Applying evidence-first observability discipline to the application layer.</div>
-      <a class="author-card-link" href="https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64" target="_blank" rel="noopener">More articles ↗</a>
-    </div>
-  </div>
-
-  <!-- ── Originally published ── -->
-  <div class="orig-pub">
-    <span>This is a standalone copy of the original post.</span>
-    <a href="https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64" target="_blank" rel="noopener">View original ↗</a>
-  </div>
+            Canonical Runbook</div>
+            
+  <p>Component health and journey health answer different questions. H.A.C.K. provides the disciplined methodology to investigate when those signals diverge.</p>
 
 </article>
 
 <footer>
-  Built on <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">Brendan Gregg's USE Method</a> &nbsp;·&nbsp;
-  <a href="https://medium.com/@singhjatinderpal/the-h-a-c-k-loop-2b54104ecd64" target="_blank" rel="noopener">Singh Jatinderpal</a>
+  Maintained by Jatinderpal Singh &nbsp;·&nbsp;
+  Built on <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">Brendan Gregg's USE Method</a>
 </footer>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     hljs.highlightAll();
-
     var bar = document.getElementById('progress-bar');
     window.addEventListener('scroll', function() {
       var doc = document.documentElement;
@@ -1346,21 +395,6 @@ COMPONENT HEALTH          JOURNEY HEALTH
       bar.style.width = (total > 0 ? Math.round((scrolled / total) * 100) : 0) + '%';
     }, { passive: true });
   });
-
-  var clapped = false;
-  function handleClap() {
-    var btn = document.getElementById('clapBtn');
-    var count = document.getElementById('clapCount');
-    if (!clapped) {
-      count.textContent = 143;
-      btn.classList.add('clapped');
-      clapped = true;
-    } else {
-      count.textContent = 142;
-      btn.classList.remove('clapped');
-      clapped = false;
-    }
-  }
 </script>
 </body>
 </html>
