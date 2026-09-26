@@ -630,7 +630,7 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
     </tbody>
   </table>
 
-  <p>A green USE dashboard is necessary, not sufficient. When infrastructure is healthy and events are still disappearing, Application Event Accounting is the next diagnostic instrument.</p>
+  <p>USE and Application Event Accounting answer different questions. A green resource-health dashboard does not by itself establish that an application journey is completing successfully. When resource health looks normal but operations are not reaching terminal states, follow the event flow.</p>
 
   <!-- ══════════════════════════════════════════════
        USE APPLIED TO APPLICATION RESOURCES
@@ -751,7 +751,7 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
 
   <p>A conventional failure takes a path. A <code>catch</code> block fires. A timeout resolves. An error counter increments. But an operation that never settles bypasses every one of those mechanisms — it neither succeeds nor fails. Infrastructure can remain completely idle and error-free while thousands of user operations are silently stuck. The system looks healthy because the component <em>is</em> healthy. The journey is not.</p>
 
-  <p>Application Event Accounting is distinct from distributed tracing. Distributed tracing follows individual requests through a system to identify where latency was introduced or where errors occurred. Application Event Accounting asks whether the <em>population</em> of operations entering a defined boundary can be fully attributed — as completed, explicitly failed, bounded in-flight, intentionally discarded, or unexplained. The two approaches are complementary.</p>
+  <p>Application Event Accounting is complementary to distributed tracing. Distributed tracing follows individual requests or traces through system boundaries to identify where latency was introduced or where errors occurred. Application Event Accounting asks whether the <em>population</em> of operations entering a defined boundary can be accounted for as successfully completed, explicitly failed, bounded in-flight, intentionally discarded, or unexplained. Tracing explains individual paths; accounting exposes population-level gaps.</p>
 
   <div class="layer-callout">
     <div class="lc-heading">Infrastructure Health &nbsp;≠&nbsp; Application Health &nbsp;≠&nbsp; User Journey Health</div>
@@ -1084,7 +1084,7 @@ HAVING net_hanging_promises > 0;</code></pre>
   ══════════════════════════════════════════════ -->
   <p>When infrastructure says everything is healthy but users say otherwise, stop looking only at resource health. Account for the application's events. Find what entered, what exited, what remains in flight — and then investigate what cannot yet be explained.</p>
 
-  <p>That unexplained remainder is where the failure lives.</p>
+  <p>That unexplained remainder is where the investigation begins.</p>
 
   <p style="font-family: var(--sans); font-size: 1rem; font-weight: 600; color: var(--accent); margin-bottom: 1.5rem;">Health → Anomaly → Candidate → Knowledge.</p>
 
