@@ -446,7 +446,7 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
   <h1>The H.A.C.K. Loop</h1>
   <p class="subtitle">An Evidence-First Investigation Loop for Diagnosing Application Issues and Outages Through Event-Funnel Analysis, inspired by the <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a> and <a href="https://c4model.com/" target="_blank" rel="noopener">C4 Model</a>.</p>
 
-  <p>Modern applications rarely operate in isolation. They depend on external modules, services, databases, infrastructure, and third-party APIs. During an incident, an engineer may not know every component, its implementation details, or even where the failure originated.</p>
+  <p>Modern applications rarely operate in isolation. They depend on internal modules, services, databases, infrastructure, and third-party APIs. During an incident, an engineer may not know every component, its implementation details, or even where the failure originated.</p>
 
   <div class="problem-framing">
     The problem H.A.C.K. addresses is not simply: "How do I find the error?"<br><br>
@@ -590,47 +590,6 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
 </div>
 
   <p>The objective is not merely to resolve today's incident. The objective is to continuously build a system where the next engineer can understand the application, identify anomalies, and trace failures with progressively less guesswork.</p>
-
-  <!-- ══════════════════════════════════════════════
-       USE METHOD RELATIONSHIP
-  ══════════════════════════════════════════════ -->
-  <h3 id="use-relationship">Relationship to the USE Method</h3>
-
-  <p>USE (Utilization, Saturation, Errors) is a resource-health framework. H.A.C.K. is a journey-health framework. They are complementary, not competing:</p>
-
-  <table class="use-table">
-    <thead>
-      <tr>
-        <th></th>
-        <th>USE Method</th>
-        <th>H.A.C.K. + Application Event Accounting</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Layer</td>
-        <td>Infrastructure resources</td>
-        <td>Application journey</td>
-      </tr>
-      <tr>
-        <td>Primary question</td>
-        <td><em>Is this component healthy?</em></td>
-        <td><em>Did this event make it through?</em></td>
-      </tr>
-      <tr>
-        <td>Measures</td>
-        <td>Utilization · Saturation · Errors</td>
-        <td>Inputs · Outputs · ΔBuffer · Sinks · Unaccounted</td>
-      </tr>
-      <tr>
-        <td>Complementary concern</td>
-        <td>Application journey and event-flow accounting are outside the primary scope of the USE resource-health model</td>
-        <td>Resource saturation and component error rates — addressed by USE at the infrastructure layer</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <p>USE and Application Event Accounting answer different questions. A green resource-health dashboard does not by itself establish that an application journey is completing successfully. When resource health looks normal but operations are not reaching terminal states, follow the event flow.</p>
 
   <!-- ══════════════════════════════════════════════
        USE APPLIED TO APPLICATION RESOURCES
