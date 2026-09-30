@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The H.A.C.K. Loop — Canonical Reference</title>
-<meta name="description" content="An evidence-first framework for diagnosing application anomalies and silent failures. USE sees the component. Application Event Accounting sees the journey. H.A.C.K. investigates the gap.">
+<meta name="description" content="An evidence-first framework for diagnosing application anomalies and silent failures. USE sees the component. Application Event Accounting sees the path. H.A.C.K. investigates the gap.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -484,7 +484,7 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
 
   <div class="flow-chain">Utilization <span class="fc-arrow">→</span> Saturation <span class="fc-arrow">→</span> Errors</div>
 
-  <p>H.A.C.K. applies an evidence-first investigation approach, inspired by the USE Method, to application event and journey health — a different analytical layer from infrastructure resource health.</p>
+  <p>H.A.C.K. applies an evidence-first investigation approach, inspired by the USE Method, to application event and path health — a different analytical layer from infrastructure resource health.</p>
 
   <p>For each important event or stage in the Health Funnel, we observe corresponding signals:</p>
 
@@ -710,13 +710,13 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
     An unexplained remainder is itself a signal.
   </div>
 
-  <p>A conventional failure takes a path. A <code>catch</code> block fires. A timeout resolves. An error counter increments. But an operation that never settles bypasses every one of those mechanisms — it neither succeeds nor fails. Infrastructure can remain completely idle and error-free while thousands of user operations are silently stuck. The system looks healthy because the component <em>is</em> healthy. The journey is not.</p>
+  <p>A conventional failure takes a path. A <code>catch</code> block fires. A timeout resolves. An error counter increments. But an operation that never settles bypasses every one of those mechanisms — it neither succeeds nor fails. Infrastructure can remain completely idle and error-free while thousands of user operations are silently stuck. The system looks healthy because the component <em>is</em> healthy. The path is not.</p>
 
   <p>Application Event Accounting is complementary to distributed tracing. Distributed tracing follows individual requests or traces through system boundaries to identify where latency was introduced or where errors occurred. Application Event Accounting asks whether the <em>population</em> of operations entering a defined boundary can be accounted for as successfully completed, explicitly failed, bounded in-flight, intentionally discarded, or unexplained. Tracing explains individual paths; accounting exposes population-level gaps.</p>
 
   <div class="layer-callout">
-    <div class="lc-heading">Infrastructure Health &nbsp;≠&nbsp; Application Health &nbsp;≠&nbsp; User Journey Health</div>
-    <p>Each layer can independently disagree. A component can be fully operational while the journey through it is failing. An aggregated metric can hide a cohort-specific collapse. An error counter can stay flat while events simply disappear.</p>
+    <div class="lc-heading">Infrastructure Health &nbsp;≠&nbsp; Application Health &nbsp;≠&nbsp; Every path Health</div>
+    <p>Each layer can independently disagree. A component can be fully operational while the path through it is failing. An aggregated metric can hide a cohort-specific collapse. An error counter can stay flat while events simply disappear.</p>
     <p>Application Event Accounting explicitly measures a layer that resource-centric infrastructure monitoring does not necessarily capture.</p>
   </div>
 
@@ -819,7 +819,7 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
     &nbsp;<span class="ph-miss">&nbsp;38</span> were unaccounted for within the accounting window.
   </div>
 
-  <p>No error counter incremented. No alert fired. CPU was idle. Latency was nominal. Resource-level indicators remained nominal; the user journey was not.</p>
+  <p>No error counter incremented. No alert fired. CPU was idle. Latency was nominal. Resource-level indicators remained nominal; the application path was not.</p>
 
   <p>The following investigation applies the H.A.C.K. Loop to a real revenue-critical incident. It illustrates concretely why component-level monitoring was insufficient, and how event accounting located the failure domain.</p>
 
@@ -831,7 +831,7 @@ footer { max-width: 740px; margin: 0 auto; padding: 2rem 1.5rem; border-top: 1px
 
       <h3>The Signal That Wasn't There</h3>
       <p>Gameplay engagement remained entirely normal. Infrastructure metrics stayed within nominal thresholds. No binary release had gone out. Yet interstitial ad impressions on iOS collapsed.</p>
-      <p>This is characteristic of a journey-level failure: component-level signals remain nominal while an application path stops completing. Without journey-level instrumentation, there is no starting point — only symptoms and guesses.</p>
+      <p>This is characteristic of a path-level failure: component-level signals remain nominal while an application path stops completing. Without path-level instrumentation, there is no starting point — only symptoms and guesses.</p>
 
       <hr class="cs-divider">
 
@@ -910,7 +910,7 @@ HAVING net_hanging_promises > 0;</code></pre>
   <div class="ap-card">
     <div class="ap-title">1. Traffic-Light Anti-Pattern</div>
     <div class="ap-quote">"Assuming the application is healthy because all infrastructure indicators report green."</div>
-    <div class="ap-box ap-why"><strong>Why it fails:</strong> Dashboards are optimized around signals already known to be measurable. Green infrastructure metrics create a false sense of completeness when the user journey itself isn't being measured — and a metric cannot signal what it isn't observing.</div>
+    <div class="ap-box ap-why"><strong>Why it fails:</strong> Dashboards are optimized around signals already known to be measurable. Green infrastructure metrics create a false sense of completeness when the applicate path itself isn't being measured — and a metric cannot signal what it isn't observing.</div>
     <div class="ap-box ap-how"><strong>H.A.C.K. alternative:</strong> Treat infrastructure health as necessary, not sufficient. Pair component-level health with Application Event Accounting. If infrastructure is green but events are not resolving, follow the event path, not the dashboard color.</div>
   </div>
 
@@ -925,7 +925,7 @@ HAVING net_hanging_promises > 0;</code></pre>
     <div class="ap-title">3. Cross-Boundary Deflection Anti-Pattern</div>
     <div class="ap-quote">"Escalating across platform boundaries based on intuition rather than telemetry."</div>
     <div class="ap-box ap-why"><strong>Why it fails:</strong> Cross-boundary failures are genuinely harder to prove. Without shared telemetry across both sides, assuming the problem lives elsewhere can feel reasonable — suspicion is easier to voice than evidence is to gather.</div>
-    <div class="ap-box ap-how"><strong>H.A.C.K. alternative:</strong> Isolate the failing journey before escalating. Measure what crossed the boundary, what returned, and what remained unaccounted for. Evidence transforms "your system is broken" into a reproducible, boundary-bounded signal the other side can investigate and action.</div>
+    <div class="ap-box ap-how"><strong>H.A.C.K. alternative:</strong> Isolate the failing path before escalating. Measure what crossed the boundary, what returned, and what remained unaccounted for. Evidence transforms "your system is broken" into a reproducible, boundary-bounded signal the other side can investigate and action.</div>
   </div>
 
   <div class="ap-card">
@@ -966,7 +966,7 @@ HAVING net_hanging_promises > 0;</code></pre>
     <!-- A: Anomaly -->
     <div class="practice-group">
       <div class="practice-group-hd"><span class="cs-step cs-step-a">A — Anomaly</span></div>
-      <div class="practice-q">Where does the journey diverge from baseline?</div>
+      <div class="practice-q">Where does the health diverge from baseline?</div>
       <div class="practice-q">What hypothesis explains the accounting gap?</div>
     </div>
 
